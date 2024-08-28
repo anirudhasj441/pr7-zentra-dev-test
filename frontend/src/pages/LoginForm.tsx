@@ -25,19 +25,49 @@ const LoginForm: React.FC = () => {
     const [password, setPassword] = useState<string>("");
 
     /**
-     * Handles the form submission event.
+     * Handles the form submission event by sending user credentials to the server.
      *
-     * Prevents the default form submission behavior and logs the username and
-     * password to the console for demonstration purposes.
+     * Prevents the default form submission behavior, sends a POST request with the
+     * username and password to the Django backend, and stores the access token in
+     * session storage if the login is successful.
      *
      * @param e - The form submission event object.
      */
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Prevents the default action of form submission
 
-        // Logs user credentials to the console (for development/testing purposes)
-        console.log("username: ", username);
-        console.log("password: ", password);
+        const url = "http://127.0.0.1:8000/auth/login";
+
+        const data = {
+            username: username,
+            password: password,
+        };
+
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error("Login failed");
+            }
+
+            const response = await res.json();
+
+            // Store the access token in session storage
+            sessionStorage.setItem("access_token", response.access);
+
+            console.log("Login successful:", response);
+
+            // Redirect or take further action here (e.g., navigate to a different page)
+        } catch (error) {
+            console.error("Error during login:", error);
+            // Handle error (e.g., show error message to the user)
+        }
     };
 
     return (

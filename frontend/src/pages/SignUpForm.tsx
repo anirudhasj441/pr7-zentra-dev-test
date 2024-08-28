@@ -33,20 +33,89 @@ const SignUpForm: React.FC = () => {
     const [password, setPassword] = useState<string>("");
 
     /**
-     * Handles the form submission event.
+     * Handles the form submission event by sending the user data to the server.
      *
-     * Prevents the default form submission behavior and logs user details to the console
-     * for demonstration purposes. This is typically where form data would be submitted
-     * to a server.
+     * Prevents the default form submission behavior, collects user input, and sends it
+     * to the server to create a new user account. Logs the server response to the console.
      *
-     * @param e - The form submission event object.
+     * @async
+     * @function
      */
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); // Prevents the default form submission action
+    const handleSubmit = async () => {
+        const url = "http://127.0.0.1:8000/auth/signup";
 
-        // Logs user credentials to the console (for development/testing purposes)
-        console.log("username: ", username);
-        console.log("password: ", password);
+        const data = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            username: username,
+            password: password,
+        };
+
+        const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const response = await res.json();
+
+        console.log(response);
+    };
+
+    /**
+     * Checks the availability of a username by sending a request to the server.
+     *
+     * Sends a POST request to the server with the username to verify if it is available.
+     * Returns `true` if the username is available, otherwise returns `false`.
+     *
+     * @async
+     * @function
+     * @param {string} username - The username to check.
+     * @returns {Promise<boolean>} A promise that resolves to `true` if the username is available,
+     *                              `false` otherwise.
+     */
+    const checkUsernameAvailability = async (username: string) => {
+        const url = "http://127.0.0.1:8000/auth/username_availability";
+
+        const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify({ username: username }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const response = await res.json();
+
+        return response.user_available === true;
+    };
+
+    /**
+     * Handles the click event of the "Next" button by validating the current step and advancing to the next step.
+     *
+     * Validates the input fields based on the current step. If validation passes, advances to the next step.
+     * Calls `checkUsernameAvailability` if the current step involves entering a username.
+     *
+     * @async
+     * @function
+     */
+    const handleNextBtnClick = async () => {
+        if (activeStep === 0) {
+            if (firstName.trim() === "" || lastName.trim() === "") return;
+        }
+        if (activeStep === 1) {
+            if (email === "") return;
+        }
+        if (activeStep === 2) {
+            if (username === "") return;
+            const usernameAvailable = await checkUsernameAvailability(username);
+            if (!usernameAvailable) return;
+        }
+
+        setActiveStep(activeStep + 1);
     };
 
     return (
@@ -142,11 +211,7 @@ const SignUpForm: React.FC = () => {
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                onClick={() =>
-                                    setActiveStep(
-                                        activeStep < 3 ? activeStep + 1 : 3,
-                                    )
-                                }
+                                onClick={handleNextBtnClick}
                                 sx={{
                                     paddingY: ".8rem",
                                 }}
