@@ -12,7 +12,7 @@
 
 import { Theme } from "@emotion/react";
 import { createTheme } from "@mui/material";
-import { purple } from "@mui/material/colors";
+// import { purple } from "@mui/material/colors";
 
 /**
  * The main theme configuration for the application.
@@ -28,7 +28,7 @@ const mainTheme: Theme = createTheme({
     palette: {
         mode: "dark", // Sets the theme to dark mode
         primary: {
-            main: purple[500], // Sets the primary color to a shade of purple
+            main: "#29b6f6"
         },
         secondary: {
             main: "#f44336", // Sets the secondary color to a shade of red

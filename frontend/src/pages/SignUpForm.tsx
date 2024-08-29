@@ -1,20 +1,21 @@
 import React, { memo, useState } from "react";
-import { Button, TextField, Link } from "@mui/material";
+import { Button, TextField, Link, Paper, Typography } from "@mui/material";
 import { Link as RLink } from "react-router-dom";
 
 /**
  * @file SignUpForm.tsx
  *
- * A React component for user registration with a multi-step sign-up form.
+ * A React component for user registration, featuring a multi-step sign-up form.
  *
- * This component displays a form that progresses through multiple steps:
- * - Entering first and last name
- * - Entering email
- * - Entering a username
- * - Entering a password
+ * The form guides the user through several steps to complete the registration process:
+ * - Step 1: Enter first and last name
+ * - Step 2: Enter email address
+ * - Step 3: Choose a username
+ * - Step 4: Set a password
  *
- * It uses Material-UI components for input fields and buttons, and Tailwind CSS
- * for layout and styling. The form also includes a navigation link to the login page.
+ * This component uses Material-UI for input fields, buttons, and typography,
+ * while Tailwind CSS is applied for layout and additional styling.
+ * Users can navigate to the login page if they already have an account.
  *
  * @component
  *
@@ -23,9 +24,9 @@ import { Link as RLink } from "react-router-dom";
  *
  * @author Anirudha Jadhav <anirudhasj441@gmail.com>
  */
+
 const SignUpForm: React.FC = () => {
-    // State variables to manage the current step of the form and user input
-    const [activeStep, setActiveStep] = useState<number>(0);
+    // State variables to manage the user input fields
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -33,15 +34,18 @@ const SignUpForm: React.FC = () => {
     const [password, setPassword] = useState<string>("");
 
     /**
-     * Handles the form submission event by sending the user data to the server.
+     * Handles the form submission event to create a new user account.
      *
-     * Prevents the default form submission behavior, collects user input, and sends it
-     * to the server to create a new user account. Logs the server response to the console.
+     * Prevents the default form submission behavior, gathers user input,
+     * and sends the data to the server to register a new account.
+     * Logs the server's response to the console.
      *
      * @async
      * @function
+     * @param {React.FormEvent} e - The form submission event object.
      */
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         const url = "http://127.0.0.1:8000/auth/signup";
 
         const data = {
@@ -61,21 +65,20 @@ const SignUpForm: React.FC = () => {
         });
 
         const response = await res.json();
-
         console.log(response);
     };
 
     /**
-     * Checks the availability of a username by sending a request to the server.
+     * Checks the availability of a username by querying the server.
      *
-     * Sends a POST request to the server with the username to verify if it is available.
-     * Returns `true` if the username is available, otherwise returns `false`.
+     * Sends a POST request to the server to verify if the provided username is available.
+     * Returns `true` if the username is available, otherwise `false`.
      *
      * @async
      * @function
      * @param {string} username - The username to check.
-     * @returns {Promise<boolean>} A promise that resolves to `true` if the username is available,
-     *                              `false` otherwise.
+     * @returns {Promise<boolean>} A promise resolving to `true` if the username is available,
+     *                             or `false` otherwise.
      */
     const checkUsernameAvailability = async (username: string) => {
         const url = "http://127.0.0.1:8000/auth/username_availability";
@@ -89,33 +92,7 @@ const SignUpForm: React.FC = () => {
         });
 
         const response = await res.json();
-
         return response.user_available === true;
-    };
-
-    /**
-     * Handles the click event of the "Next" button by validating the current step and advancing to the next step.
-     *
-     * Validates the input fields based on the current step. If validation passes, advances to the next step.
-     * Calls `checkUsernameAvailability` if the current step involves entering a username.
-     *
-     * @async
-     * @function
-     */
-    const handleNextBtnClick = async () => {
-        if (activeStep === 0) {
-            if (firstName.trim() === "" || lastName.trim() === "") return;
-        }
-        if (activeStep === 1) {
-            if (email === "") return;
-        }
-        if (activeStep === 2) {
-            if (username === "") return;
-            const usernameAvailable = await checkUsernameAvailability(username);
-            if (!usernameAvailable) return;
-        }
-
-        setActiveStep(activeStep + 1);
     };
 
     return (
@@ -123,25 +100,21 @@ const SignUpForm: React.FC = () => {
             {/* Container for centering the form in the viewport */}
             <div className="h-full w-full flex justify-center items-center">
                 {/* Form container with fixed width, padding, and column layout */}
-                <div className="form-container w-[500px] h-full max-w-full px-3 py-5 flex flex-col justify-between gap-3">
-                    {/* Form title with styling */}
-                    <div className="text-3xl text-center font-bold">
-                        Create a New Account
-                    </div>
-                    {/* Form content with dynamic steps */}
-                    <div className="w-full flex-grow my-5 flex flex-col gap-5 justify-between">
-                        <div className="">
-                            {/* Render fields based on the active step */}
-                            {activeStep === 0 && (
-                                <div className="flex flex-col gap-5">
+                <Paper elevation={5} className="w-[500px] max-w-full mx-5" square={false}>
+                    <div className="form-container h-full px-3 py-5 flex flex-col justify-between gap-3">
+                        {/* Form title with styling */}
+                        <Typography variant="h4" align="center">Create a New Account</Typography>
+                        {/* Form content with dynamic steps */}
+                        <form action="#" onSubmit={handleSubmit} className="w-full my-5 flex flex-col gap-8 justify-between">
+                            <div className="flex flex-col gap-8">
+                                {/* Render fields based on the active step */}
+                                <div className="flex gap-5">
                                     <TextField
                                         label="First Name"
                                         variant="outlined"
                                         fullWidth
                                         value={firstName}
-                                        onChange={(e) =>
-                                            setFirstName(e.target.value)
-                                        }
+                                        onChange={(e) => setFirstName(e.target.value)}
                                         required
                                     />
                                     <TextField
@@ -149,14 +122,10 @@ const SignUpForm: React.FC = () => {
                                         variant="outlined"
                                         fullWidth
                                         value={lastName}
-                                        onChange={(e) =>
-                                            setLastName(e.target.value)
-                                        }
+                                        onChange={(e) => setLastName(e.target.value)}
                                         required
                                     />
                                 </div>
-                            )}
-                            {activeStep === 1 && (
                                 <TextField
                                     label="Email"
                                     variant="outlined"
@@ -165,70 +134,48 @@ const SignUpForm: React.FC = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
-                            )}
-                            {activeStep === 2 && (
                                 <TextField
                                     label="Username"
                                     variant="outlined"
                                     fullWidth
                                     value={username}
-                                    onChange={(e) =>
-                                        setUsername(e.target.value)
-                                    }
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    onBlur={(e) => checkUsernameAvailability(e.target.value)}
                                     required
                                 />
-                            )}
-                            {activeStep === 3 && (
                                 <TextField
                                     label="Password"
                                     type="password"
                                     variant="outlined"
                                     fullWidth
                                     value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
+                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
-                            )}
+                                {/* Submit button to create a new account */}
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    sx={{
+                                        paddingY: ".8rem",
+                                    }}
+                                >
+                                    Create Account
+                                </Button>
+                            </div>
+                        </form>
+                        {/* Footer section with a link to the login page */}
+                        <div className="w-full flex gap-2 justify-center items-center">
+                            <Typography>Already have an account?</Typography>
+                            <Typography>|</Typography>
+                            <Link component={RLink} to={"/login"}>
+                                Login
+                            </Link>
                         </div>
-
-                        {/* Conditional button based on the current step */}
-                        {activeStep === 3 ? (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={handleSubmit}
-                                sx={{
-                                    paddingY: ".8rem",
-                                }}
-                            >
-                                Create Account
-                            </Button>
-                        ) : (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={handleNextBtnClick}
-                                sx={{
-                                    paddingY: ".8rem",
-                                }}
-                            >
-                                Next
-                            </Button>
-                        )}
                     </div>
-                    {/* Footer section with a link to the login page */}
-                    <div className="w-full flex gap-2 justify-center items-center">
-                        <span>Already have an account?</span>
-                        <span>|</span>
-                        <Link component={RLink} to={"/login"}>
-                            Login
-                        </Link>
-                    </div>
-                </div>
+                </Paper>
             </div>
         </>
     );
