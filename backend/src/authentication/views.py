@@ -51,13 +51,9 @@ class UserAvailability(APIView):
         """
         data = request.data
         user = User.objects.filter(username=data['username']).first()
-        if user is None:
-            return Response({
-                'user_available': True
-            }, status=status.HTTP_200_OK)
-
+        
         return Response({
-            'user_available': False
+            'user_available': user is None
         }, status=status.HTTP_200_OK)
 
 class SignUpUser(APIView):
@@ -80,7 +76,7 @@ class SignUpUser(APIView):
 
         if not serializer.is_valid():
             return Response({
-                'status': 500,
+                'status': 400,
                 'error': serializer.errors,
                 'message': "Something went wrong"
             }, status=status.HTTP_400_BAD_REQUEST)

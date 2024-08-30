@@ -100,7 +100,7 @@ const SignUpForm: React.FC = () => {
             {/* Container for centering the form in the viewport */}
             <div className="h-full w-full flex justify-center items-center">
                 {/* Form container with fixed width, padding, and column layout */}
-                <Paper elevation={5} className="w-[500px] max-w-full mx-5" square={false}>
+                <Paper elevation={12} className="w-[500px] max-w-full mx-5" square={false}>
                     <div className="form-container h-full px-3 py-5 flex flex-col justify-between gap-3">
                         {/* Form title with styling */}
                         <Typography variant="h4" align="center">Create a New Account</Typography>

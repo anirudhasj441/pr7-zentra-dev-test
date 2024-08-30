@@ -24,6 +24,7 @@ import { createTheme } from "@mui/material";
  * @constant
  * @type {Theme}
  */
+
 const mainTheme: Theme = createTheme({
     palette: {
         mode: "dark", // Sets the theme to dark mode
@@ -33,7 +34,7 @@ const mainTheme: Theme = createTheme({
         secondary: {
             main: "#f44336", // Sets the secondary color to a shade of red
         },
-    },
+    }
 });
 
 export const customTheme: Theme = createTheme({
@@ -47,9 +48,9 @@ export const customTheme: Theme = createTheme({
         },
         background: {
             default: "#9ccde6",
-            paper: "#00000069"
+            paper: "#8d9da44f"
         }
-    },
+    }
 })
 
 export default mainTheme;
