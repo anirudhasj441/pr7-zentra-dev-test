@@ -5,8 +5,10 @@ class IntrestRequestSerializer(ModelSerializer):
     class Meta:
         model = IntrestRequest
         fields = [
+            'id',
             'request_from',
-            'request_to'
+            'request_to',
+            'status'
         ]
 
     def validate(self, data):
