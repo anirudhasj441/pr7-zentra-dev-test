@@ -17,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import IntrestRequestSerializer
 from django.contrib.auth.models import User
 from .models import IntrestRequest
+from authentication.serializers import userSerializer
 
 # Create your views here.
 
@@ -40,6 +41,16 @@ class IndexView(APIView):
 
 
 class IntrestRequestView(APIView):
+    
+    def get(self, request):
+        intrest_requests = IntrestRequest.objects.filter(request_to = request.user)
+        
+        serializer = IntrestRequestSerializer(intrest_requests, many=True)
+        
+        return Response({
+            "payload": serializer.data
+        }, status=status.HTTP_200_OK)
+    
     """
     @brief View for handling IntrestRequest operations.
 
@@ -102,4 +113,40 @@ class IntrestRequestView(APIView):
         print("user: ", type(user))
         return Response({
             'payload': serializer.data,
+        }, status=status.HTTP_200_OK)
+        
+class ListUsers(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        query = request.query_params.get('s')
+        intrest_requests = IntrestRequest.objects.filter(request_from=request.user)
+        
+            
+        exclude_users = [intrest_request.request_to.username for intrest_request in intrest_requests ]
+        
+        if(query is None):
+            users = User.objects.all().exclude(username__in=exclude_users)
+        else:
+            users = User.objects.filter(username__icontains=query).exclude(username__in=exclude_users)
+        
+        print(exclude_users)
+        
+        # users.exclude(username = exclude_users)
+        print(users)
+        serializer = userSerializer(users, many=True)
+        
+        return Response({
+            "payload": serializer.data
+        })
+        
+class IntrestRequestExists(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        request_from = User.objects.get(username = request.data["username"])
+        
+        intrest_request = IntrestRequest.objects.filter(request_to=request.user, request_from=request_from)
+        
+        return Response({
+            "request_sent": intrest_request is not None
         }, status=status.HTTP_200_OK)

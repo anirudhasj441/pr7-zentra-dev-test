@@ -106,6 +106,104 @@ class User {
         }
     };
 
+    public getAllUsers = async () => {
+        const url = "http://127.0.0.1:8000/list_users";
+
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this._access_token,
+                },
+            });
+
+            if (!res.ok) throw new Error("Something went wrong");
+
+            const response = await res.json();
+
+            return response.payload;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    public checkRequestSent = async (username: string) => {
+        const url = "http://127.0.0.1:8000/check_request_sent";
+
+        const data = {
+            username: username,
+        };
+
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "Application/json",
+                    Authorization: "Bearer " + this._access_token,
+                },
+            });
+
+            if (!res.ok) throw new Error("Something went wrong.");
+
+            const response = await res.json();
+
+            return response.request_sent;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
+    public sendRequest = async (username: string) => {
+        const url = "http://127.0.0.1:8000/request";
+
+        try {
+            const data = {
+                request_to: username,
+            };
+            const res = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "Application/json",
+                    Authorization: "Bearer " + this._access_token,
+                },
+            });
+
+            if (!res.ok) throw new Error("Something went wrong.");
+
+            const response = await res.json();
+
+            console.log(response);
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
+    public getRequests = async () => {
+        const url = "http://127.0.0.1:8000/request";
+
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this._access_token,
+                },
+            });
+
+            if (!res.ok) throw new Error("Something went wrong.");
+
+            const response = await res.json();
+
+            console.log(response);
+            return response.payload;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
     public get isAuthenticated(): boolean {
         return this._isAuthenticated;
     }

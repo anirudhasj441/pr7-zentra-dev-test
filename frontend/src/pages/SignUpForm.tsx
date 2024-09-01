@@ -87,7 +87,10 @@ const SignUpForm: React.FC = () => {
         // const response = await res.json();
         console.log(usernameError);
         if (usernameError) return;
-        if (!(await checkUsernameAvailability(username))) {
+        const usernameAvailable: boolean =
+            await checkUsernameAvailability(username);
+        console.log("::::::", usernameAvailable);
+        if (!usernameAvailable) {
             setUsernameError(true);
             return;
         }
@@ -122,9 +125,9 @@ const SignUpForm: React.FC = () => {
         });
 
         const response = await res.json();
-        console.log(response.user_available);
+        console.log(username, ": ", response.user_available);
         setUsernameError(!response.user_available);
-        return response.user_available === "true";
+        return response.user_available;
     };
 
     useEffect(() => {
