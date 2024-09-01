@@ -19,7 +19,11 @@ import { ThemeProvider } from "@emotion/react";
 import mainTheme from "./Theme";
 import { CssBaseline } from "@mui/material";
 import router from "./router";
+import User from "./User";
 import "./index.css";
+import userContext from "./User/context";
+
+const user = new User();
 
 /**
  * Initializes the root of the React application and renders the root component.
@@ -41,7 +45,9 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider theme={mainTheme}>
             <CssBaseline />
-            <RouterProvider router={router} />
+            <userContext.Provider value={user}>
+                <RouterProvider router={router} />
+            </userContext.Provider>
         </ThemeProvider>
     </StrictMode>,
 );

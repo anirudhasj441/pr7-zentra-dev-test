@@ -18,14 +18,30 @@
  * @author Anirudha Jadhav <anirudhasj441@gmail.com>
  */
 
-import React, { memo, useState } from "react";
-import { TextField, Button, Link, Typography, Paper } from "@mui/material";
-import { Link as RLink } from "react-router-dom";
+import React, { memo, useContext, useState, useEffect, useRef } from "react";
+import {
+    TextField,
+    Button,
+    Link,
+    Typography,
+    Paper,
+    Alert,
+} from "@mui/material";
+import { Link as RLink, useNavigate } from "react-router-dom";
+import userContext from "../User/context";
 
 const LoginForm: React.FC = () => {
+    const mounted = useRef(false);
+
     // State variables to manage the input fields for username and password
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+
+    const user = useContext(userContext);
+
+    const navigate = useNavigate();
 
     /**
      * Handles the form submission event by sending user credentials to the server.
@@ -39,49 +55,57 @@ const LoginForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Prevent the default form submission behavior
 
-        const url = "http://127.0.0.1:8000/auth/login";
+        const result = await user.login(username, password);
 
-        const data = {
-            username: username,
-            password: password,
-        };
-
-        try {
-            const res = await fetch(url, {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (!res.ok) {
-                throw new Error("Login failed");
-            }
-
-            const response = await res.json();
-
-            // Store the access token in session storage
-            sessionStorage.setItem("access_token", response.access);
-
-            console.log("Login successful:", response);
-
-            // Redirect or take further action here (e.g., navigate to a different page)
-        } catch (error) {
-            console.error("Error during login:", error);
-            // Handle error (e.g., show an error message to the user)
+        if (result) {
+            navigate("/");
+        } else {
+            setShowAlert(true);
         }
     };
+
+    useEffect(() => {
+        if (mounted.current) return;
+        user.checkUserAuthenticated().then((result) => {
+            console.log(result);
+            if (result) {
+                navigate("/");
+            }
+        });
+
+        return () => {
+            mounted.current = true;
+        };
+    }, [user, navigate]);
 
     return (
         <>
             {/* Container for centering the form in the viewport */}
             <div className="h-full w-full flex justify-center items-center">
+                {showAlert ? (
+                    <Alert
+                        severity="error"
+                        variant="filled"
+                        onClose={() => setShowAlert(false)}
+                        className=" fixed top-5 left-1/2 -translate-x-1/2"
+                    >
+                        Oops! The username or password you entered is incorrect.
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
                 {/* Form container with fixed width, padding, and column layout */}
-                <Paper className="w-[500px] max-w-full mx-5" elevation={5} square={false}>
+                <Paper
+                    className="w-[500px] max-w-full mx-5"
+                    elevation={5}
+                    square={false}
+                >
                     <div className="form-container h-full px-3 py-5 justify-center flex flex-col gap-3">
                         {/* Form title with styling */}
-                        <Typography variant="h4" align="center">Login</Typography>
+                        <Typography variant="h4" align="center">
+                            Login
+                        </Typography>
                         {/* Form element that handles user input */}
                         <form
                             action="#"
@@ -95,7 +119,9 @@ const LoginForm: React.FC = () => {
                                     variant="outlined"
                                     fullWidth
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    onChange={(e) =>
+                                        setUsername(e.target.value)
+                                    }
                                     required
                                 />
                                 {/* Password input field with Material-UI styling */}
@@ -105,7 +131,9 @@ const LoginForm: React.FC = () => {
                                     variant="outlined"
                                     fullWidth
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
                                     required
                                 />
                             </div>

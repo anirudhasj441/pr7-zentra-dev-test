@@ -1,6 +1,15 @@
-import React, { memo, useState } from "react";
-import { Button, TextField, Link, Paper, Typography } from "@mui/material";
+import React, { memo, useContext, useState, useEffect, useRef } from "react";
+import {
+    Button,
+    TextField,
+    Link,
+    Paper,
+    Typography,
+    Alert,
+} from "@mui/material";
 import { Link as RLink } from "react-router-dom";
+import userContext from "../User/context";
+import { useNavigate } from "react-router-dom";
 
 /**
  * @file SignUpForm.tsx
@@ -26,12 +35,23 @@ import { Link as RLink } from "react-router-dom";
  */
 
 const SignUpForm: React.FC = () => {
+    const mounted = useRef(false);
+
     // State variables to manage the user input fields
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+
+    const [usernameError, setUsernameError] = useState<boolean>(false);
+
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
+
+    const user = useContext(userContext);
+
+    const navigate = useNavigate();
 
     /**
      * Handles the form submission event to create a new user account.
@@ -46,7 +66,7 @@ const SignUpForm: React.FC = () => {
      */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const url = "http://127.0.0.1:8000/auth/signup";
+        // const url = "http://127.0.0.1:8000/auth/signup";
 
         const data = {
             first_name: firstName,
@@ -56,16 +76,26 @@ const SignUpForm: React.FC = () => {
             password: password,
         };
 
-        const res = await fetch(url, {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        // const res = await fetch(url, {
+        //     method: "POST",
+        //     body: JSON.stringify(data),
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        // });
 
-        const response = await res.json();
-        console.log(response);
+        // const response = await res.json();
+        console.log(usernameError);
+        if (usernameError) return;
+        if (!(await checkUsernameAvailability(username))) {
+            setUsernameError(true);
+            return;
+        }
+        console.log(data);
+        const result: boolean = await user.signup(data);
+        setSignupSuccess(result);
+        setShowAlert(true);
+        console.log(result);
     };
 
     /**
@@ -92,20 +122,61 @@ const SignUpForm: React.FC = () => {
         });
 
         const response = await res.json();
-        return response.user_available === true;
+        console.log(response.user_available);
+        setUsernameError(!response.user_available);
+        return response.user_available === "true";
     };
+
+    useEffect(() => {
+        if (mounted.current) return;
+        user.checkUserAuthenticated().then((result) => {
+            console.log(result);
+            if (result) {
+                navigate("/");
+            }
+        });
+
+        return () => {
+            mounted.current = true;
+        };
+    }, [user, navigate]);
 
     return (
         <>
             {/* Container for centering the form in the viewport */}
             <div className="h-full w-full flex justify-center items-center">
+                {showAlert ? (
+                    <Alert
+                        severity={signupSuccess ? "success" : "error"}
+                        variant="filled"
+                        className=" fixed top-5 left-1/2 -translate-x-1/2"
+                        onClose={() => setShowAlert(false)}
+                    >
+                        {signupSuccess
+                            ? "Account created successfully."
+                            : "Sign up failed"}
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+
                 {/* Form container with fixed width, padding, and column layout */}
-                <Paper elevation={12} className="w-[500px] max-w-full mx-5" square={false}>
+                <Paper
+                    elevation={12}
+                    className="w-[500px] max-w-full mx-5"
+                    square={false}
+                >
                     <div className="form-container h-full px-3 py-5 flex flex-col justify-between gap-3">
                         {/* Form title with styling */}
-                        <Typography variant="h4" align="center">Create a New Account</Typography>
+                        <Typography variant="h4" align="center">
+                            Create a New Account
+                        </Typography>
                         {/* Form content with dynamic steps */}
-                        <form action="#" onSubmit={handleSubmit} className="w-full my-5 flex flex-col gap-8 justify-between">
+                        <form
+                            action="#"
+                            onSubmit={handleSubmit}
+                            className="w-full my-5 flex flex-col gap-8 justify-between"
+                        >
                             <div className="flex flex-col gap-8">
                                 {/* Render fields based on the active step */}
                                 <div className="flex gap-5">
@@ -114,7 +185,9 @@ const SignUpForm: React.FC = () => {
                                         variant="outlined"
                                         fullWidth
                                         value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
+                                        onChange={(e) =>
+                                            setFirstName(e.target.value)
+                                        }
                                         required
                                     />
                                     <TextField
@@ -122,12 +195,15 @@ const SignUpForm: React.FC = () => {
                                         variant="outlined"
                                         fullWidth
                                         value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
+                                        onChange={(e) =>
+                                            setLastName(e.target.value)
+                                        }
                                         required
                                     />
                                 </div>
                                 <TextField
                                     label="Email"
+                                    type="email"
                                     variant="outlined"
                                     fullWidth
                                     value={email}
@@ -135,12 +211,24 @@ const SignUpForm: React.FC = () => {
                                     required
                                 />
                                 <TextField
+                                    error={usernameError}
                                     label="Username"
                                     variant="outlined"
                                     fullWidth
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    onBlur={(e) => checkUsernameAvailability(e.target.value)}
+                                    helperText={
+                                        usernameError
+                                            ? "Username already taken."
+                                            : ""
+                                    }
+                                    onChange={(e) =>
+                                        setUsername(e.target.value)
+                                    }
+                                    onBlur={(e) =>
+                                        checkUsernameAvailability(
+                                            e.target.value,
+                                        )
+                                    }
                                     required
                                 />
                                 <TextField
@@ -149,7 +237,9 @@ const SignUpForm: React.FC = () => {
                                     variant="outlined"
                                     fullWidth
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
                                     required
                                 />
                                 {/* Submit button to create a new account */}
