@@ -15,6 +15,7 @@ from .serializers import userSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout
+from rest_framework.permissions import IsAuthenticated
 
 def getUserToken(user):
     """
@@ -33,6 +34,16 @@ def getUserToken(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token)
     }
+    
+class UserIsAuthenticated(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        serializer = userSerializer(request.user);
+        
+        return Response({
+            "payload": serializer.data
+        }, status=status.HTTP_200_OK)
+        
 
 class UserAvailability(APIView):
     """
