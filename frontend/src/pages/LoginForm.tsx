@@ -58,7 +58,7 @@ const LoginForm: React.FC = () => {
         const result = await user.login(username, password);
 
         if (result) {
-            navigate("/");
+            location.reload();
         } else {
             setShowAlert(true);
         }

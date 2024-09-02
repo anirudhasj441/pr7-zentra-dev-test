@@ -18,7 +18,7 @@
  */
 
 import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import userContext from "../User/context";
 
@@ -31,44 +31,63 @@ import userContext from "../User/context";
  * @returns {JSX.Element} The rendered layout with nested route content.
  */
 const MainLayout: React.FC = () => {
+    const mounted = useRef(false);
 
-    const user = useContext(userContext)
+    const user = useContext(userContext);
+
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
 
     const location = useLocation();
     const navigate = useNavigate();
-    console.log(location.pathname)
+    console.log(location.pathname);
 
-    const handleLogoutBtnClick = () => {
-        user.logout();
+    useEffect(() => {
+        if (mounted.current) return;
         user.checkUserAuthenticated().then((result) => {
-            console.log("??????????????", result);
+            console.log("??????????????", result, ":: ", user.firstName);
+
+            setFirstName(user.firstName);
+            setLastName(user.lastName);
             if (!result) {
                 navigate("/login");
             }
         });
-    }
+
+        return () => {
+            mounted.current = true;
+        };
+    }, [user, navigate]);
+
+    const handleLogoutBtnClick = async () => {
+        user.logout();
+        navigate("/login");
+    };
 
     return (
         <div className="w-svw h-svh flex flex-col">
-            {!['/login', '/signup'].includes(location.pathname) ?
-            <AppBar position="static">
-                <Toolbar>
-                    <div>
-                    <Typography variant="h5">{user.firstName} {user.lastName}</Typography>
-                    </div>
+            {!["/login", "/signup"].includes(location.pathname) ? (
+                <AppBar position="static">
+                    <Toolbar>
+                        <div>
+                            <Typography variant="h5">
+                                {firstName} {lastName}
+                            </Typography>
+                        </div>
 
-                    <div className="flex-grow"></div>
-                    <Button color="inherit" onClick={handleLogoutBtnClick}>Logout</Button>
-                </Toolbar>
-            </AppBar> :
-            <></>
-            }
-
+                        <div className="flex-grow"></div>
+                        <Button color="inherit" onClick={handleLogoutBtnClick}>
+                            Logout
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+            ) : (
+                <></>
+            )}
 
             {/* The Outlet component will render the content of nested routes here */}
             <div className="flex-grow">
                 <Outlet />
-
             </div>
         </div>
     );

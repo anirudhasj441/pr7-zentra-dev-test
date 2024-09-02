@@ -39,6 +39,12 @@ class User {
             const response = await res.json();
 
             console.log(response);
+
+            this._username = response.payload.username;
+            this._firstName = response.payload.first_name;
+            this._lastName = response.payload.last_name;
+            this._email = response.payload.email;
+
             this._isAuthenticated = true;
             return true;
         } catch (error) {
@@ -96,9 +102,9 @@ class User {
 
     public logout = () => {
         sessionStorage.removeItem("access_token");
-        this._access_token = null
+        this._access_token = null;
         this._isAuthenticated = false;
-    }
+    };
 
     public signup = async (data: IUserData): Promise<boolean> => {
         const url = "http://127.0.0.1:8000/auth/signup";
@@ -228,8 +234,8 @@ class User {
 
         const data = {
             request_id: requestId,
-            status: status
-        }
+            status: status,
+        };
 
         try {
             const res = await fetch(url, {
@@ -238,21 +244,20 @@ class User {
                 headers: {
                     "Content-Type": "Application/json",
                     Authorization: "Bearer " + this._access_token,
-                }
-            })
-            if(!res.ok) throw new Error("Something went wrong");
+                },
+            });
+            if (!res.ok) throw new Error("Something went wrong");
 
             const response = await res.json();
 
-            console.log(response)
+            console.log(response);
 
-            return true
-
-        } catch(error) {
+            return true;
+        } catch (error) {
             console.error(error);
-            return false
+            return false;
         }
-    }
+    };
 
     public get isAuthenticated(): boolean {
         return this._isAuthenticated;
