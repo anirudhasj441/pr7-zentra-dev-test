@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, ValidationError
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 class userSerializer(ModelSerializer):
     class Meta:
         model = User
