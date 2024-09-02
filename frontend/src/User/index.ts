@@ -5,6 +5,14 @@ class User {
 
     private _access_token: string | null;
 
+    private _username: string = "";
+
+    private _firstName: string = "";
+
+    private _lastName: string = "";
+
+    private _email: string = "";
+
     public constructor() {
         this._access_token = sessionStorage.getItem("access_token");
         // this._checkUserAuthenticated().then((result) => {
@@ -70,6 +78,10 @@ class User {
             this._access_token = response.access;
             console.log("Login successful:", response);
 
+            this._username = response.user.username;
+            this._firstName = response.user.first_name;
+            this._lastName = response.user.last_name;
+            this._email = response.user.email;
             this._isAuthenticated = true;
 
             return true;
@@ -217,6 +229,19 @@ class User {
 
     public set isAuthenticated(value: boolean) {
         this._isAuthenticated = value;
+    }
+
+    public get username(): string {
+        return this._username;
+    }
+    public get firstName(): string {
+        return this._firstName;
+    }
+    public get lastName(): string {
+        return this._lastName;
+    }
+    public get email(): string {
+        return this._email;
     }
 }
 

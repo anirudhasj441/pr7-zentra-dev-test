@@ -17,7 +17,7 @@
  * @author Anirudha Jadhav <anirudhasj441@gmail.com>
  */
 
-import { AppBar, Button, Toolbar } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import userContext from "../User/context";
@@ -53,6 +53,10 @@ const MainLayout: React.FC = () => {
             {!['/login', '/signup'].includes(location.pathname) ?
             <AppBar position="static">
                 <Toolbar>
+                    <div>
+                    <Typography variant="h5">{user.firstName} {user.lastName}</Typography>
+                    </div>
+
                     <div className="flex-grow"></div>
                     <Button color="inherit" onClick={handleLogoutBtnClick}>Logout</Button>
                 </Toolbar>
