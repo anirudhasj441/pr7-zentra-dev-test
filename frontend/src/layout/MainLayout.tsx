@@ -17,8 +17,10 @@
  * @author Anirudha Jadhav <anirudhasj441@gmail.com>
  */
 
-import React from "react";
-import { Outlet } from "react-router-dom";
+import { AppBar, Button, Toolbar } from "@mui/material";
+import React, { useContext } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import userContext from "../User/context";
 
 /**
  * MainLayout component that wraps nested routes with a consistent layout.
@@ -29,10 +31,41 @@ import { Outlet } from "react-router-dom";
  * @returns {JSX.Element} The rendered layout with nested route content.
  */
 const MainLayout: React.FC = () => {
+
+    const user = useContext(userContext)
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    console.log(location.pathname)
+
+    const handleLogoutBtnClick = () => {
+        user.logout();
+        user.checkUserAuthenticated().then((result) => {
+            console.log("??????????????", result);
+            if (!result) {
+                navigate("/login");
+            }
+        });
+    }
+
     return (
-        <div className="w-svw h-svh">
+        <div className="w-svw h-svh flex flex-col">
+            {!['/login', '/signup'].includes(location.pathname) ?
+            <AppBar position="static">
+                <Toolbar>
+                    <div className="flex-grow"></div>
+                    <Button color="inherit" onClick={handleLogoutBtnClick}>Logout</Button>
+                </Toolbar>
+            </AppBar> :
+            <></>
+            }
+
+
             {/* The Outlet component will render the content of nested routes here */}
-            <Outlet />
+            <div className="flex-grow">
+                <Outlet />
+
+            </div>
         </div>
     );
 };

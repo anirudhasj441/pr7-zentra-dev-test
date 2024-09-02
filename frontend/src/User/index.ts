@@ -31,6 +31,7 @@ class User {
             const response = await res.json();
 
             console.log(response);
+            this._isAuthenticated = true;
             return true;
         } catch (error) {
             console.error("Error during login:", error);
@@ -80,6 +81,12 @@ class User {
             return false;
         }
     };
+
+    public logout = () => {
+        sessionStorage.removeItem("access_token");
+        this._access_token = null
+        this._isAuthenticated = false;
+    }
 
     public signup = async (data: IUserData): Promise<boolean> => {
         const url = "http://127.0.0.1:8000/auth/signup";

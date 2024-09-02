@@ -124,7 +124,9 @@ const IndexPage: React.FC = () => {
                         </div>
                     </TabContext>
                 </Paper>
-                <div className="flex-grow"></div>
+                <div className="flex-grow flex flex-col">
+
+                </div>
             </div>
         </>
     );
