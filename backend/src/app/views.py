@@ -11,9 +11,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import IntrestRequestSerializer
+from .serializers import IntrestRequestSerializer, ChatSerializer
 from django.contrib.auth import get_user_model
-from .models import IntrestRequest
+from .models import IntrestRequest, Chat
 from authentication.serializers import userSerializer
 
 User = get_user_model()
@@ -147,3 +147,33 @@ class IntrestRequestExists(APIView):
         return Response({
             "request_sent": intrest_request.exists()
         }, status=status.HTTP_200_OK)
+        
+class ChatsView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        chats = Chat.objects.filter(initiator = request.user)
+        
+        serializer = ChatSerializer(chats, many=True)
+        
+        return Response({
+            "payload": serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    def post(self, request):
+        acceptor = User.objects.get(username=request.data["acceptor"])
+        data = {
+            "initiator": request.user.pk,
+            "acceptor": acceptor.pk
+        }
+        print(data)  
+        chat = Chat.objects.create(
+            initiator = request.user,
+            acceptor = acceptor
+        )
+        
+        serializer = ChatSerializer(chat)
+        
+        return Response({
+            "payload": serializer.data
+        })

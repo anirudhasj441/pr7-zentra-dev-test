@@ -72,7 +72,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pr7_zentra_test.wsgi.application'
+# WSGI_APPLICATION = 'pr7_zentra_test.wsgi.application'
+ASGI_APPLICATION = 'pr7_zentra_test.asgi.application'
 
 
 # Database

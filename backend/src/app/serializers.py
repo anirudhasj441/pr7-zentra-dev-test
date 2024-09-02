@@ -6,7 +6,7 @@
 """
 
 from rest_framework.serializers import ModelSerializer, ValidationError
-from .models import IntrestRequest
+from .models import IntrestRequest, Chat, ChatMessage
 from authentication.serializers import userSerializer
 
 # --------------------------------------------------------------
@@ -74,4 +74,19 @@ class IntrestRequestSerializer(ModelSerializer):
             if field not in data.keys():
                 raise ValidationError({field: f"{field} is required"})
             
+        return data
+    
+class MessageSerializer(ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        exclude = ("chat",)
+
+
+class ChatSerializer(ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
+    class Meta:
+        model = Chat
+        fields = ["messages", "short_id"]
+        
+    def validate(self, data):
         return data

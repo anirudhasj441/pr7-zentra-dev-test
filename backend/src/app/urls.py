@@ -31,5 +31,7 @@ urlpatterns = [
     # @brief Route for checking if a request has been sent.
     # @details Maps the 'check_request_sent' URL to the IntrestRequestExists view, which checks 
     #          if an interest request has already been sent between users.
-    path('check_request_sent', views.IntrestRequestExists.as_view())
+    path('check_request_sent', views.IntrestRequestExists.as_view()),
+    
+    path('chats', views.ChatsView.as_view())
 ]
