@@ -43,7 +43,7 @@ class IndexView(APIView):
 class IntrestRequestView(APIView):
     
     def get(self, request):
-        intrest_requests = IntrestRequest.objects.filter(request_to = request.user)
+        intrest_requests = IntrestRequest.objects.filter(request_to = request.user, status="pending")
         
         serializer = IntrestRequestSerializer(intrest_requests, many=True)
         
