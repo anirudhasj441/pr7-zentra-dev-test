@@ -223,6 +223,37 @@ class User {
         }
     };
 
+    public updateRequestStatus = async (requestId: number, status: string) => {
+        const url = "http://127.0.0.1:8000/request";
+
+        const data = {
+            request_id: requestId,
+            status: status
+        }
+
+        try {
+            const res = await fetch(url, {
+                method: "PATCH",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "Application/json",
+                    Authorization: "Bearer " + this._access_token,
+                }
+            })
+            if(!res.ok) throw new Error("Something went wrong");
+
+            const response = await res.json();
+
+            console.log(response)
+
+            return true
+
+        } catch(error) {
+            console.error(error);
+            return false
+        }
+    }
+
     public get isAuthenticated(): boolean {
         return this._isAuthenticated;
     }
