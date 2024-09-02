@@ -124,6 +124,7 @@ class ListUsers(APIView):
         
             
         exclude_users = [intrest_request.request_to.username for intrest_request in intrest_requests ]
+        exclude_users.append(request.user.username)
         
         if(query is None):
             users = User.objects.all().exclude(username__in=exclude_users)
