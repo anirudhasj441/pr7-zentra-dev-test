@@ -1,5 +1,6 @@
 """
 @file views.py
+@brief API views for user authentication and registration.
 
 This module contains API views for user authentication and registration using Django Rest Framework.
 It includes views for checking username availability, user registration, and user login. JWT tokens
@@ -18,6 +19,7 @@ from django.contrib.auth import authenticate, logout
 from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
+
 def getUserToken(user):
     """
     @brief Generates JWT tokens for the given user.
@@ -26,7 +28,6 @@ def getUserToken(user):
     class from the `rest_framework_simplejwt` package.
 
     @param user The user object for whom tokens are generated.
-
     @return A dictionary containing 'refresh' and 'access' tokens as strings.
     """
     refresh = RefreshToken.for_user(user)
@@ -35,16 +36,27 @@ def getUserToken(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token)
     }
-    
+
 class UserIsAuthenticated(APIView):
+    """
+    @brief API view to get the authenticated user's information.
+
+    This view handles GET requests and returns the currently authenticated user's data.
+    """
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        serializer = userSerializer(request.user);
+        """
+        @brief Handles GET requests to return the authenticated user's data.
+
+        @param request The HTTP request object.
+        @return Response A Response object containing the user's data.
+        """
+        serializer = userSerializer(request.user)
         
         return Response({
             "payload": serializer.data
         }, status=status.HTTP_200_OK)
-        
 
 class UserAvailability(APIView):
     """
@@ -58,7 +70,6 @@ class UserAvailability(APIView):
         @brief Handles POST requests to check username availability.
 
         @param request The HTTP request object containing the username to check.
-
         @return Response A Response object indicating whether the username is available.
         """
         data = request.data
@@ -81,7 +92,6 @@ class SignUpUser(APIView):
         @brief Handles POST requests for user registration.
 
         @param request The HTTP request object containing user registration data.
-
         @return Response A Response object with registration status and JWT tokens upon success.
         """
         serializer = userSerializer(data=request.data)
@@ -116,7 +126,6 @@ class LoginUser(APIView):
         @brief Handles POST requests for user login.
 
         @param request The HTTP request object containing username and password.
-
         @return Response A Response object with login status, JWT tokens, and user data upon success.
         """
         data = request.data

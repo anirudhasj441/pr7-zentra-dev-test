@@ -1,12 +1,9 @@
 """
 @file views.py
 @brief Contains the views for handling requests in the application.
-
-This file defines the views for the application using Django's APIView class.
-It includes the `IndexView` for simple GET requests and the `IntrestRequestView` 
-for handling POST and PATCH requests related to IntrestRequest instances.
-
-@module
+@details This file defines the views for the application using Django's APIView class.
+         It includes views for handling interest requests between users, such as 
+         creating, updating, and listing requests, as well as checking if a request exists.
 """
 
 from django.shortcuts import render
@@ -19,84 +16,72 @@ from django.contrib.auth import get_user_model
 from .models import IntrestRequest
 from authentication.serializers import userSerializer
 
-# Create your views here.
-
 User = get_user_model()
 
+# --------------------------------------------------------------
+# @class IndexView
+# @brief View for returning a simple greeting message.
+# @details This view handles GET requests and returns a response with a greeting message.
+# --------------------------------------------------------------
 class IndexView(APIView):
     """
-    @brief View for returning a simple greeting message.
-
-    This view handles GET requests and returns a response with a greeting message.
+    @brief Handles GET requests for the IndexView.
+    @param request The HTTP request object.
+    @return Response A Response object containing a greeting message.
     """
-    
     def get(self, request):
-        """
-        @brief Handles GET requests for the IndexView.
-
-        @param request The HTTP request object.
-        @return Response A Response object containing a greeting message.
-        """
         return Response({
             "msg": "Hello World"
         })
 
 
+# --------------------------------------------------------------
+# @class IntrestRequestView
+# @brief View for handling IntrestRequest operations.
+# @details This view handles GET, POST, and PATCH requests for managing IntrestRequest instances.
+#          Only authenticated users are allowed to access this view.
+# --------------------------------------------------------------
 class IntrestRequestView(APIView):
-    
+    permission_classes = [IsAuthenticated]
+
+    """
+    @brief Handles GET requests to retrieve pending IntrestRequest instances.
+    @param request The HTTP request object.
+    @return Response A Response object containing the serialized data of pending requests.
+    """
     def get(self, request):
-        intrest_requests = IntrestRequest.objects.filter(request_to = request.user, status="pending")
-        
+        intrest_requests = IntrestRequest.objects.filter(request_to=request.user, status="pending")
         serializer = IntrestRequestSerializer(intrest_requests, many=True)
-        
         return Response({
             "payload": serializer.data
         }, status=status.HTTP_200_OK)
-    
-    """
-    @brief View for handling IntrestRequest operations.
 
-    This view handles POST and PATCH requests for creating and updating IntrestRequest instances.
-    Only authenticated users are allowed to access this view.
     """
-    permission_classes = [IsAuthenticated]
-
+    @brief Handles POST requests to create a new IntrestRequest.
+    @param request The HTTP request object containing the request data.
+    @return Response A Response object containing the status and message of the request.
+    """
     def post(self, request):
-        """
-        @brief Handles POST requests to create a new IntrestRequest.
-
-        @param request The HTTP request object containing the request data.
-        @return Response A Response object containing the status and message of the request.
-        """
         requestTo = User.objects.get(username=request.data["request_to"])
-
         intres_request = IntrestRequest.objects.create(
             request_from=request.user,
             request_to=requestTo
         )
-
         serializer = IntrestRequestSerializer(intres_request)
-
-        print(serializer.data)
-
         return Response({
             'payload': serializer.data,
             'message': 'request sent successfully'
         }, status=status.HTTP_201_CREATED)
-        
-    def patch(self, request):
-        """
-        @brief Handles PATCH requests to update an existing IntrestRequest.
 
-        @param request The HTTP request object containing the update data.
-        @return Response A Response object containing the updated data or an error message.
-        """
+    """
+    @brief Handles PATCH requests to update an existing IntrestRequest.
+    @param request The HTTP request object containing the update data.
+    @return Response A Response object containing the updated data or an error message.
+    """
+    def patch(self, request):
         data = request.data
-        
         intrest_request = IntrestRequest.objects.get(id=data["request_id"])
-        
         serializer = IntrestRequestSerializer(intrest_request, data={"status": data["status"]}, partial=True)
-        
         if not serializer.is_valid():
             return Response({
                 'status': 400, 
@@ -105,44 +90,60 @@ class IntrestRequestView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         user = serializer.save()
-        print("user: ", type(user))
         return Response({
             'payload': serializer.data,
         }, status=status.HTTP_200_OK)
-        
+
+
+# --------------------------------------------------------------
+# @class ListUsers
+# @brief View for listing users excluding those with existing interest requests.
+# @details This view handles GET requests to retrieve a list of users that the 
+#          current user has not sent an interest request to.
+# --------------------------------------------------------------
 class ListUsers(APIView):
     permission_classes = [IsAuthenticated]
-    
+
+    """
+    @brief Handles GET requests to list users.
+    @param request The HTTP request object.
+    @return Response A Response object containing a list of serialized user data.
+    """
     def get(self, request):
         query = request.query_params.get('s')
         intrest_requests = IntrestRequest.objects.filter(request_from=request.user)
         
-            
-        exclude_users = [intrest_request.request_to.username for intrest_request in intrest_requests ]
+        exclude_users = [intrest_request.request_to.username for intrest_request in intrest_requests]
         exclude_users.append(request.user.username)
         
-        if(query is None):
+        if query is None:
             users = User.objects.all().exclude(username__in=exclude_users)
         else:
             users = User.objects.filter(username__icontains=query).exclude(username__in=exclude_users)
         
-        print(exclude_users)
-        
-        # users.exclude(username = exclude_users)
-        print(users)
         serializer = userSerializer(users, many=True)
-        
         return Response({
             "payload": serializer.data
         })
-        
+
+
+# --------------------------------------------------------------
+# @class IntrestRequestExists
+# @brief View for checking if an interest request has been sent.
+# @details This view handles POST requests to check if an interest request has already 
+#          been sent from the current user to another user.
+# --------------------------------------------------------------
 class IntrestRequestExists(APIView):
     permission_classes = [IsAuthenticated]
+
+    """
+    @brief Handles POST requests to check if an interest request exists.
+    @param request The HTTP request object containing the username to check against.
+    @return Response A Response object indicating whether the request exists.
+    """
     def post(self, request):
-        request_from = User.objects.get(username = request.data["username"])
-        
+        request_from = User.objects.get(username=request.data["username"])
         intrest_request = IntrestRequest.objects.filter(request_to=request.user, request_from=request_from)
-        
         return Response({
-            "request_sent": intrest_request is not None
+            "request_sent": intrest_request.exists()
         }, status=status.HTTP_200_OK)
