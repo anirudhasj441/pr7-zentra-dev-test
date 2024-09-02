@@ -25,63 +25,31 @@ const UserList: React.FC = () => {
 
     useEffect(() => {
         if (mounted.current) return;
-        user.getAllUsers().then((users) => {
-            // users = users.map(async (u: IUserData) => {
-            //     u.request_sent = await user.checkRequestSent(u.username);
-            //     return u;
-            // });
-            setUsers(users);
-        });
+        user.getAllUsers().then(setUsers);
         return () => {
             mounted.current = true;
         };
     }, [user]);
 
-    // const checkRequestSent = async (username: string) => {
-    //     const url = "http://127.0.0.1:8000/check_request_sent";
-
-    //     const data = {
-    //         username: username,
-    //     };
-
-    //     try {
-    //         const res = await fetch(url, {
-    //             method: "POST",
-    //             body: JSON.stringify(data),
-    //             headers: {
-    //                 "Content-Type": "Application/json",
-    //                 Autherization: Authorization: "Bearer " + this._access_token,
-    //             },
-    //         });
-
-    //         if (!res.ok) throw new Error("Somethin went wrong.");
-
-    //         const response = await res.json();
-
-    //         return response.request_sent;
-    //     } catch (error) {
-    //         console.error(error);
-    //         return false;
-    //     }
-    // };
-
     return (
         <>
             <List>
                 {users.map((u: IUserData) => (
-                    <ListItem key={u.username}>
+                    <React.Fragment key={u.username}>
+                    <ListItem >
                         <ListItemIcon>
                             <Icon icon="mdi:user" fontSize={"2rem"} />
                         </ListItemIcon>
-                        <ListItemText>
-                            {u.first_name} {u.last_name}
+                        <ListItemText primary={u.first_name + " " + u.last_name} secondary={"@"+u.username}>
                         </ListItemText>
+
                         <IconButton
                             onClick={() => handleSendRequestBtn(u.username)}
                         >
                             <Icon icon="mdi:user-add" />
                         </IconButton>
                     </ListItem>
+                    </React.Fragment>
                 ))}
             </List>
         </>
