@@ -68,21 +68,14 @@ class IntrestRequestView(APIView):
         """
         requestTo = User.objects.get(username=request.data["request_to"])
 
-        data = {
-            "request_from": request.user.pk,
-            "request_to": requestTo.pk
-        }
+        intres_request = IntrestRequest.objects.create(
+            request_from=request.user,
+            request_to=requestTo
+        )
 
-        serializer = IntrestRequestSerializer(data=data)
+        serializer = IntrestRequestSerializer(intres_request)
 
-        if not serializer.is_valid():
-            return Response({
-                'status': 400,
-                'error': serializer.errors,
-                'message': "Something went wrong"
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer.save()
+        print(serializer.data)
 
         return Response({
             'payload': serializer.data,
