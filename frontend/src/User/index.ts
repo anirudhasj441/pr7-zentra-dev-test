@@ -259,6 +259,48 @@ class User {
         }
     };
 
+    public getChats = async() => {
+        const url = "http://127.0.0.1:8000/chats"
+
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this._access_token,
+                }
+            })
+
+            if(!res.ok) throw new Error("Some thing wen wrong.");
+
+            const response = await res.json()
+
+            console.log("CHATS:::::::", response)
+
+            return response.payload
+        } catch(error) {
+            console.error(error)
+        }
+    }
+
+    public getMessages = async (chat_id: string) => {
+        const url = "http://127.0.0.1:8000/messages?chat_id=" + chat_id
+
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this._access_token,
+                },
+            })
+
+            if(!res.ok) throw new Error("Something went wrond")
+
+            const response = await res.json();
+
+            return response.payload
+        } catch(error) {
+            console.error(error)
+        }
+    }
+
     public get isAuthenticated(): boolean {
         return this._isAuthenticated;
     }

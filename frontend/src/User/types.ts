@@ -13,3 +13,16 @@ export interface IRequestData {
     request_to: IUserData,
     status: "pending" | "accept" | "reject"
 }
+
+export interface IChatData {
+    short_id: string,
+    initiator: IUserData,
+    acceptor: IUserData
+}
+
+export interface IMessageData {
+    id: number,
+    text: string,
+    created_at: string,
+    sender: IUserData
+}

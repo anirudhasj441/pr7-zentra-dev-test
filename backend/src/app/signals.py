@@ -10,6 +10,7 @@ from .models import IntrestRequest
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from .models import Chat
 
 User = get_user_model()
 
@@ -36,6 +37,11 @@ def addFriend(sender, instance, **kwargs):
     if instance.status != "accept":
         return
     
+    chat = Chat.objects.create(
+        initiator = instance.request_from,
+        acceptor = instance.request_to
+    )
+
     # Add both users as friends
     instance.request_to.friends.add(instance.request_from)
     instance.request_from.friends.add(instance.request_to)

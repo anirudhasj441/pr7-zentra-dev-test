@@ -7,7 +7,7 @@
 """
 
 from django.contrib import admin
-from .models import IntrestRequest
+from .models import IntrestRequest, Chat, ChatMessage
 
 # --------------------------------------------------------------
 # @class IntrestRequestAdmin
@@ -25,10 +25,27 @@ class IntrestRequestAdmin(admin.ModelAdmin):
         "request_to",
         "status"
     ]
-    
+
+class ChatAdmin(admin.ModelAdmin):
+    list_display = [
+        "short_id",
+        "initiator",
+        "acceptor",
+    ]
+
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = [
+        "created_at",
+        "chat",
+        "sender",
+        "text"
+    ]
 # --------------------------------------------------------------
 # @brief Registers the IntrestRequest model with the Django admin.
 # @details This statement registers the IntrestRequest model with the 
 #          Django admin site, using the IntrestRequestAdmin class for customization.
 # --------------------------------------------------------------
 admin.site.register(IntrestRequest, IntrestRequestAdmin)
+
+admin.site.register(Chat,ChatAdmin)
+admin.site.register(ChatMessage,ChatMessageAdmin)

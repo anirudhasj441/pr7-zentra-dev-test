@@ -11,10 +11,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import IntrestRequestSerializer, ChatSerializer
+from .serializers import IntrestRequestSerializer, ChatSerializer, MessageSerializer
 from django.contrib.auth import get_user_model
-from .models import IntrestRequest, Chat
+from .models import IntrestRequest, Chat, ChatMessage
 from authentication.serializers import userSerializer
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -152,7 +153,7 @@ class ChatsView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        chats = Chat.objects.filter(initiator = request.user)
+        chats = Chat.objects.filter(Q(initiator = request.user) | Q(acceptor = request.user))
         
         serializer = ChatSerializer(chats, many=True)
         
@@ -174,6 +175,25 @@ class ChatsView(APIView):
         
         serializer = ChatSerializer(chat)
         
+        return Response({
+            "payload": serializer.data
+        })
+    
+class MessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        chat_id = request.query_params.get("chat_id")
+
+        if chat_id is None: 
+            return Response({
+                "payload": []
+            })
+        
+        messages = ChatMessage.objects.filter(chat__short_id = chat_id)
+
+        serializer = MessageSerializer(messages, many=True)
+
         return Response({
             "payload": serializer.data
         })

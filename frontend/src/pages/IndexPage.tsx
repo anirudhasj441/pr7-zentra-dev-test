@@ -2,13 +2,15 @@ import { Typography, Paper, Tab } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { memo } from "react";
 import userContext from "../User/context";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { TabContext } from "@mui/lab";
 import { Icon } from "@iconify/react";
 import UserList from "../components/UserList";
 import RequstList from "../components/RequestList";
+import mainSocket from "../socket";
+import ChatList from "../components/ChatList";
 
 const IndexPage: React.FC = () => {
     const user = useContext(userContext);
@@ -24,6 +26,7 @@ const IndexPage: React.FC = () => {
     };
 
     useEffect(() => {
+        mainSocket.connect();
         if (mounted.current) return;
         user.checkUserAuthenticated().then((result) => {
             console.log(result);
@@ -32,7 +35,16 @@ const IndexPage: React.FC = () => {
             }
         });
 
+        mainSocket.on("connect", () => {
+            console.log("connect to socket.. ")
+        })
+
+        mainSocket.on("sock:send", (data) => {
+            console.log("message from socket: ", data)
+        })
+
         return () => {
+            mainSocket.disconnect()
             mounted.current = true;
         };
     }, [user, navigate]);
@@ -49,15 +61,17 @@ const IndexPage: React.FC = () => {
                         <div className="flex-grow">
                             <TabPanel
                                 value={"chats"}
-                                sx={{ padding: "0.8rem" }}
+                                sx={{ padding: "0" }}
                             >
                                 <Typography
                                     variant="h4"
                                     align="left"
                                     // className="pb-1"
+                                    sx={{padding: "0.8rem"}}
                                 >
                                     Chats
                                 </Typography>
+                                <ChatList />
                             </TabPanel>
                             <TabPanel
                                 value={"add_new"}
@@ -125,7 +139,7 @@ const IndexPage: React.FC = () => {
                     </TabContext>
                 </Paper>
                 <div className="flex-grow flex flex-col">
-
+                    <Outlet />
                 </div>
             </div>
         </>

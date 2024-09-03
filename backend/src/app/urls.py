@@ -33,5 +33,7 @@ urlpatterns = [
     #          if an interest request has already been sent between users.
     path('check_request_sent', views.IntrestRequestExists.as_view()),
     
-    path('chats', views.ChatsView.as_view())
+    path('chats', views.ChatsView.as_view()),
+
+    path('messages', views.MessageView.as_view()),
 ]

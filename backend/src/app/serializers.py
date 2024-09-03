@@ -77,16 +77,19 @@ class IntrestRequestSerializer(ModelSerializer):
         return data
     
 class MessageSerializer(ModelSerializer):
+    sender = userSerializer(read_only=True)
     class Meta:
         model = ChatMessage
         exclude = ("chat",)
 
 
 class ChatSerializer(ModelSerializer):
-    messages = MessageSerializer(many=True, read_only=True)
+    # messages = MessageSerializer(many=True, read_only=True)
+    initiator = userSerializer(read_only = True)
+    acceptor = userSerializer(read_only=True)
     class Meta:
         model = Chat
-        fields = ["messages", "short_id"]
+        fields = ["short_id", "initiator", "acceptor"]
         
     def validate(self, data):
         return data

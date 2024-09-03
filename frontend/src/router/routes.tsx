@@ -16,6 +16,7 @@ import { Suspense } from "react";
 import IndexPage from "../pages/IndexPage";
 import LoginForm from "../pages/LoginForm";
 import SignUpForm from "../pages/SignUpForm";
+import ChatBox from "../components/ChatBox";
 
 const routes: RouteObject[] = [
     {
@@ -29,6 +30,14 @@ const routes: RouteObject[] = [
                         <IndexPage />
                     </Suspense>
                 ),
+                children: [
+                    {
+                        path: "chat/:chat_id",
+                        element: <Suspense fallback={<h1>Loading</h1>}>
+                            <ChatBox />
+                        </Suspense>
+                    }
+                ]
             },
             {
                 path: "login",

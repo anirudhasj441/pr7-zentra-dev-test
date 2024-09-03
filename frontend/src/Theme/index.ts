@@ -32,7 +32,7 @@ const mainTheme: Theme = createTheme({
             main: "#29b6f6"
         },
         secondary: {
-            main: "#f44336", // Sets the secondary color to a shade of red
+            main: "#262626", // Sets the secondary color to a shade of red
         },
     }
 });
@@ -41,7 +41,8 @@ export const customTheme: Theme = createTheme({
     palette: {
         mode: "light", // Sets the theme to dark mode
         primary: {
-            main: "#29b6f6"
+            main: "#29b6f6",
+
         },
         secondary: {
             main: "#f44336", // Sets the secondary color to a shade of red
