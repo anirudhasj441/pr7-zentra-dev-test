@@ -29,12 +29,12 @@ const mainTheme: Theme = createTheme({
     palette: {
         mode: "dark", // Sets the theme to dark mode
         primary: {
-            main: "#29b6f6"
+            main: "#29b6f6",
         },
         secondary: {
             main: "#262626", // Sets the secondary color to a shade of red
         },
-    }
+    },
 });
 
 export const customTheme: Theme = createTheme({
@@ -42,16 +42,15 @@ export const customTheme: Theme = createTheme({
         mode: "light", // Sets the theme to dark mode
         primary: {
             main: "#29b6f6",
-
         },
         secondary: {
             main: "#f44336", // Sets the secondary color to a shade of red
         },
         background: {
             default: "#9ccde6",
-            paper: "#8d9da44f"
-        }
-    }
-})
+            paper: "#8d9da44f",
+        },
+    },
+});
 
 export default mainTheme;

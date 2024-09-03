@@ -36,15 +36,15 @@ const IndexPage: React.FC = () => {
         });
 
         mainSocket.on("connect", () => {
-            console.log("connect to socket.. ")
-        })
+            console.log("connect to socket.. ");
+        });
 
         mainSocket.on("sock:send", (data) => {
-            console.log("message from socket: ", data)
-        })
+            console.log("message from socket: ", data);
+        });
 
         return () => {
-            mainSocket.disconnect()
+            mainSocket.disconnect();
             mounted.current = true;
         };
     }, [user, navigate]);
@@ -55,19 +55,16 @@ const IndexPage: React.FC = () => {
                 <Paper
                     elevation={3}
                     square
-                    className=" w-[350px] max-w-full h-full flex flex-col"
+                    className=" w-[350px] max-w-1/2 h-full flex flex-col"
                 >
                     <TabContext value={currentTab}>
                         <div className="flex-grow">
-                            <TabPanel
-                                value={"chats"}
-                                sx={{ padding: "0" }}
-                            >
+                            <TabPanel value={"chats"} sx={{ padding: "0" }}>
                                 <Typography
                                     variant="h4"
                                     align="left"
                                     // className="pb-1"
-                                    sx={{padding: "0.8rem"}}
+                                    sx={{ padding: "0.8rem" }}
                                 >
                                     Chats
                                 </Typography>
@@ -138,7 +135,7 @@ const IndexPage: React.FC = () => {
                         </div>
                     </TabContext>
                 </Paper>
-                <div className="flex-grow flex flex-col">
+                <div className="flex-grow flex flex-col overflow-y-auto">
                     <Outlet />
                 </div>
             </div>

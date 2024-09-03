@@ -11,6 +11,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models import Chat
+from .sockets import sio
+from .serializers import ChatSerializer
 
 User = get_user_model()
 
@@ -31,8 +33,6 @@ def addFriend(sender, instance, **kwargs):
     @details Checks if the status of the IntrestRequest instance is "accept". 
              If so, the users involved in the request are added as friends to each other.
     """
-    print("Calling signal...")
-
     # Check if the request status is "accept"
     if instance.status != "accept":
         return

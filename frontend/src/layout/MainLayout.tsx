@@ -40,7 +40,6 @@ const MainLayout: React.FC = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    console.log(location.pathname);
 
     useEffect(() => {
         if (mounted.current) return;
@@ -65,7 +64,7 @@ const MainLayout: React.FC = () => {
     };
 
     return (
-        <div className="w-svw h-svh flex flex-col">
+        <div className="w-svw h-svh flex flex-col overflow-y-auto">
             {!["/login", "/signup"].includes(location.pathname) ? (
                 <AppBar position="static">
                     <Toolbar>
@@ -86,7 +85,7 @@ const MainLayout: React.FC = () => {
             )}
 
             {/* The Outlet component will render the content of nested routes here */}
-            <div className="flex-grow">
+            <div className="flex-grow overflow-y-auto">
                 <Outlet />
             </div>
         </div>

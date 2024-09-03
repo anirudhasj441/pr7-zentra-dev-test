@@ -8,21 +8,21 @@ export interface IUserData {
 }
 
 export interface IRequestData {
-    id: number,
-    request_from: IUserData,
-    request_to: IUserData,
-    status: "pending" | "accept" | "reject"
+    id: number;
+    request_from: IUserData;
+    request_to: IUserData;
+    status: "pending" | "accept" | "reject";
 }
 
 export interface IChatData {
-    short_id: string,
-    initiator: IUserData,
-    acceptor: IUserData
+    short_id: string;
+    initiator: IUserData;
+    acceptor: IUserData;
 }
 
 export interface IMessageData {
-    id: number,
-    text: string,
-    created_at: string,
-    sender: IUserData
+    id: number;
+    text: string;
+    created_at: string;
+    sender: IUserData;
 }

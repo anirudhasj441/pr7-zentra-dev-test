@@ -33,11 +33,13 @@ const routes: RouteObject[] = [
                 children: [
                     {
                         path: "chat/:chat_id",
-                        element: <Suspense fallback={<h1>Loading</h1>}>
-                            <ChatBox />
-                        </Suspense>
-                    }
-                ]
+                        element: (
+                            <Suspense fallback={<h1>Loading</h1>}>
+                                <ChatBox />
+                            </Suspense>
+                        ),
+                    },
+                ],
             },
             {
                 path: "login",

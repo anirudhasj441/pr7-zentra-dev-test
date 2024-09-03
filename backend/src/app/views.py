@@ -115,12 +115,19 @@ class ListUsers(APIView):
         intrest_requests = IntrestRequest.objects.filter(request_from=request.user)
         
         exclude_users = [intrest_request.request_to.username for intrest_request in intrest_requests]
-        exclude_users.append(request.user.username)
         
         if query is None:
-            users = User.objects.all().exclude(username__in=exclude_users)
+            users = User.objects.all().exclude(
+                Q(username = request.user.username) | 
+                Q(username__in=exclude_users) | 
+                Q(friends=request.user)
+            )
         else:
-            users = User.objects.filter(username__icontains=query).exclude(username__in=exclude_users)
+            users = User.objects.filter(username__icontains=query).exclude(
+                Q(username = request.user.username) | 
+                Q(username__in=exclude_users) | 
+                Q(friends=request.user)
+            )
         
         serializer = userSerializer(users, many=True)
         return Response({
@@ -167,7 +174,7 @@ class ChatsView(APIView):
             "initiator": request.user.pk,
             "acceptor": acceptor.pk
         }
-        print(data)  
+
         chat = Chat.objects.create(
             initiator = request.user,
             acceptor = acceptor
