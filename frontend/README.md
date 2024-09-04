@@ -43,6 +43,8 @@ Follow these steps to get your development environment set up:
     ```bash
     npm run dev
     ```
+1. **Access the Application**:
+   Open your web browser and go to http://127.0.0.1:3000/ to view the application.
 **Note**: Please ensure that the backend server is running before starting the frontend application. For instructions on setting up and running the backend, refer to the [backend project's README](../backend/README.md).
 
 ## Source Code Documentation
