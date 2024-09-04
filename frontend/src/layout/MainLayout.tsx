@@ -58,6 +58,13 @@ const MainLayout: React.FC = () => {
         };
     }, [user, navigate]);
 
+    /**
+     * @function handleLogoutBtnClick
+     * @brief Handles the click event for the logout button.
+     * @details Logs out the current user and redirects to the login page.
+     * @async
+     * @returns {Promise<void>} A promise that resolves when the user is logged out and redirection is complete.
+     */
     const handleLogoutBtnClick = async () => {
         user.logout();
         navigate("/login");

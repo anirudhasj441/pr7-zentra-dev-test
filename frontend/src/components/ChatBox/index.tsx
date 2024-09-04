@@ -1,3 +1,18 @@
+/**
+ * @file ChatBox/index.tsx
+ *
+ * @brief Component for displaying and sending chat messages.
+ *
+ * @component
+ * The `ChatBox` component handles the chat interface, including displaying messages,
+ * sending new messages, and managing socket connections for real-time updates.
+ *
+ * @example
+ * <ChatBox />
+ *
+ * @author Anirudha Jadhav <anirudhasj441@gmail.com>
+ */
+
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Box, IconButton, TextField, Typography } from "@mui/material";
 import React, { memo, useContext, useEffect, useRef, useState } from "react";
@@ -9,10 +24,17 @@ import mainSocket from "../../socket";
 import "./style.scss";
 import moment from "moment";
 
+/**
+ * @function ChatBox
+ * @brief Component for displaying and sending chat messages.
+ * @details This component handles the chat interface, including displaying messages,
+ *          sending new messages, and managing socket connections for real-time updates.
+ * @returns {JSX.Element} The rendered chat box component.
+ */
 const ChatBox: React.FC = () => {
     const mounted = useRef(false);
 
-    const { chat_id } = useParams();
+    const { chat_id } = useParams<string>();
 
     const user = useContext(userContext);
 
@@ -21,6 +43,12 @@ const ChatBox: React.FC = () => {
     const [messages, setMessages] = useState<IMessageData[]>([]);
     const [msgText, setMsgText] = useState<string>("");
 
+    /**
+     * @function handleSendBtnClick
+     * @brief Sends a message when the send button is clicked.
+     * @details This function emits a `message:send` event with the message data to the socket server
+     *          and clears the input field.
+     */
     const handleSendBtnClick = () => {
         if (msgText.trim() === "") return;
         mainSocket.emit("message:send", {
@@ -32,6 +60,11 @@ const ChatBox: React.FC = () => {
         setMsgText("");
     };
 
+    /**
+     * @function handleNewMessage
+     * @brief Adds a new message to the messages state.
+     * @param {IMessageData} message - The new message data to add.
+     */
     const handleNewMessage = (message: IMessageData) => {
         setMessages((messages) => [...messages, message]);
     };

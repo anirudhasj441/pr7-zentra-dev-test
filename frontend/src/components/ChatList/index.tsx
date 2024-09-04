@@ -1,3 +1,18 @@
+/**
+ * @file ChatList/index.tsx
+ *
+ * @brief Component for displaying a list of chats.
+ *
+ * @component
+ * The `ChatList` component displays a list of chat items. Each item represents a chat session
+ * and allows the user to navigate to the chat's detail view.
+ *
+ * @example
+ * <ChatList />
+ *
+ * @author Anirudha Jadhav <anirudhasj441@gmail.com>
+ */
+
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
     List,
@@ -10,6 +25,13 @@ import userContext from "../../User/context";
 import { IChatData } from "../../User/types";
 import { useLocation, useNavigate } from "react-router-dom";
 
+/**
+ * @function ChatList
+ * @brief Component for displaying a list of chats.
+ * @details This component fetches and displays a list of chat items. Each item in the list represents
+ *          a chat session and includes navigation to the chat's detail view upon selection.
+ * @returns {JSX.Element} The rendered chat list component.
+ */
 const ChatList: React.FC = () => {
     const mounted = useRef(false);
 

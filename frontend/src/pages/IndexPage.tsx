@@ -1,3 +1,19 @@
+/**
+ * @file IndexPage.tsx
+ *
+ * @brief Main page component that provides the primary user interface.
+ *
+ * @component
+ * The `IndexPage` component is the main interface of the application, featuring a sidebar with
+ * tabs for navigating between chats, adding new users, and viewing requests. It also handles
+ * socket connections and user authentication checks.
+ *
+ * @example
+ * <IndexPage />
+ *
+ * @author Anirudha Jadhav <anirudhasj441@gmail.com>
+ */
+
 import { Typography, Paper, Tab } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { memo } from "react";
@@ -12,6 +28,13 @@ import RequstList from "../components/RequestList";
 import mainSocket from "../socket";
 import ChatList from "../components/ChatList";
 
+/**
+ * @function IndexPage
+ * @brief Main page component that includes a tabbed interface for navigating different sections.
+ * @details This component handles the user interface for navigating between chats, adding new
+ *          users, and viewing requests. It also manages socket connections and user authentication.
+ * @returns {JSX.Element} The rendered `IndexPage` component with navigation tabs and content area.
+ */
 const IndexPage: React.FC = () => {
     const user = useContext(userContext);
     const mounted = useRef(false);
@@ -20,6 +43,12 @@ const IndexPage: React.FC = () => {
 
     const [currentTab, setCurrentTab] = useState<string>("chats");
 
+    /**
+     * @function handleTabChange
+     * @brief Handles tab change events and updates the current tab state.
+     * @param event The synthetic event triggered by tab change.
+     * @param value The new tab value to be set.
+     */
     const handleTabChange = (event: React.SyntheticEvent, value: string) => {
         event.preventDefault();
         setCurrentTab(value);
@@ -27,7 +56,9 @@ const IndexPage: React.FC = () => {
 
     useEffect(() => {
         mainSocket.connect();
+
         if (mounted.current) return;
+
         user.checkUserAuthenticated().then((result) => {
             console.log(result);
             if (!result) {
@@ -36,7 +67,7 @@ const IndexPage: React.FC = () => {
         });
 
         mainSocket.on("connect", () => {
-            console.log("connect to socket.. ");
+            console.log("Connected to socket.");
         });
 
         mainSocket.on("sock:send", (data) => {
@@ -55,7 +86,7 @@ const IndexPage: React.FC = () => {
                 <Paper
                     elevation={3}
                     square
-                    className=" w-[350px] max-w-1/2 h-full flex flex-col"
+                    className="w-[350px] max-w-1/2 h-full flex flex-col"
                 >
                     <TabContext value={currentTab}>
                         <div className="flex-grow">
@@ -63,7 +94,6 @@ const IndexPage: React.FC = () => {
                                 <Typography
                                     variant="h4"
                                     align="left"
-                                    // className="pb-1"
                                     sx={{ padding: "0.8rem" }}
                                 >
                                     Chats
@@ -78,7 +108,6 @@ const IndexPage: React.FC = () => {
                                 <Typography
                                     variant="h4"
                                     align="left"
-                                    // className="pb-1"
                                 >
                                     Add New
                                 </Typography>
@@ -91,7 +120,6 @@ const IndexPage: React.FC = () => {
                                 <Typography
                                     variant="h4"
                                     align="left"
-                                    // className="pb-1"
                                 >
                                     Request
                                 </Typography>
