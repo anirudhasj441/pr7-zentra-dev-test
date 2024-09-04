@@ -59,7 +59,10 @@ The backend will be built using Django, providing a robust framework for handlin
 1. **Access the Application**: <br>
     - Open your web browser and go to http://127.0.0.1:8000/ to view the application. <br>
     - The Django admin interface is available at http://127.0.0.1:8000/admin/.
-
+1. **Run test cases**:
+   ```bash
+   python manage.py test app
+   ```
 **Note**: Ensure that you have the frontend project running as well. For instructions on starting the frontend, refer to the [frontend project's README](../frontend/README.md).
 
 **Additional Note**: Redis server should be up and running at port 6379. You can start Redis using the following command if it's not already running:
