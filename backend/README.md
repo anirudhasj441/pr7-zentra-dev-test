@@ -41,7 +41,10 @@ The backend will be built using Django, providing a robust framework for handlin
     ```bash
     pip install -r requirements.txt
     ```
-
+1. **Navigate to Source Directory**:
+   ```bash
+   cd ./src
+   ```
 1. **Apply Database Migrations**:
     ```bash
     python manage.py migrate
