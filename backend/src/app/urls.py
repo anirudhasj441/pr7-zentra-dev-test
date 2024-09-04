@@ -33,7 +33,13 @@ urlpatterns = [
     #          if an interest request has already been sent between users.
     path('check_request_sent', views.IntrestRequestExists.as_view(), name="check_request_sent"),
     
+    # @brief Route for list and create chats.
+    # @details Maps the 'chats' URL to the ChatsView view, which handles the
+    #           createtion and listing chats.
     path('chats', views.ChatsView.as_view(), name="chats"),
 
+    # @brief Route for list and create messages.
+    # @details Maps the 'messages' URL to the MessageView view, which handles the
+    #           createtion and listing messages.
     path('messages', views.MessageView.as_view(), name="messages"),
 ]

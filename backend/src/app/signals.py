@@ -16,30 +16,26 @@ from .serializers import ChatSerializer
 
 User = get_user_model()
 
-# --------------------------------------------------------------
-# @name addFriend
-# @brief Adds users as friends upon accepting an IntrestRequest.
-# @details This signal is triggered after an IntrestRequest instance is saved. 
-#          If the request status is "accept", it adds the requesting user and 
-#          the requested user as friends in the database.
-# @param sender The model class that sent the signal (IntrestRequest).
-# @param instance The actual IntrestRequest instance being saved.
-# @param kwargs Additional keyword arguments passed to the signal.
-# --------------------------------------------------------------
 @receiver(post_save, sender=IntrestRequest)
 def addFriend(sender, instance, **kwargs):
     """
-    @brief Adds friends when an interest request is accepted.
-    @details Checks if the status of the IntrestRequest instance is "accept". 
-             If so, the users involved in the request are added as friends to each other.
+    @brief Adds users as friends upon accepting an IntrestRequest.
+    @details This signal is triggered after an IntrestRequest instance is saved. 
+             If the request status is "accept", it adds the requesting user and 
+             the requested user as friends in the database.
+
+    @param sender The model class that sent the signal (IntrestRequest).
+    @param instance The actual IntrestRequest instance being saved.
+    @param kwargs Additional keyword arguments passed to the signal.
     """
     # Check if the request status is "accept"
     if instance.status != "accept":
         return
     
+    # Create a chat between the initiator and the acceptor
     chat = Chat.objects.create(
-        initiator = instance.request_from,
-        acceptor = instance.request_to
+        initiator=instance.request_from,
+        acceptor=instance.request_to
     )
 
     # Add both users as friends

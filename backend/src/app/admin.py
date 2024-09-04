@@ -9,17 +9,14 @@
 from django.contrib import admin
 from .models import IntrestRequest, Chat, ChatMessage
 
-# --------------------------------------------------------------
-# @class IntrestRequestAdmin
-# @brief Admin interface for the IntrestRequest model.
-# @details This class customizes the Django admin interface for the 
-#          IntrestRequest model, specifying which fields are displayed 
-#          in the list view.
-# --------------------------------------------------------------
 class IntrestRequestAdmin(admin.ModelAdmin):
-    # @brief Fields to display in the list view of the admin interface.
-    # @details This attribute specifies the model fields that will be shown 
-    #          in the list view of the IntrestRequest entries in the admin panel.
+    """
+    @brief Admin interface for the IntrestRequest model.
+    @details This class customizes the Django admin interface for the 
+             IntrestRequest model, specifying which fields are displayed 
+             in the list view.
+    """
+    
     list_display = [
         "request_from",
         "request_to",
@@ -27,6 +24,13 @@ class IntrestRequestAdmin(admin.ModelAdmin):
     ]
 
 class ChatAdmin(admin.ModelAdmin):
+    """
+    @brief Admin interface for the Chat model.
+    @details This class customizes the Django admin interface for the 
+             Chat model, specifying which fields are displayed 
+             in the list view.
+    """
+    
     list_display = [
         "short_id",
         "initiator",
@@ -34,18 +38,25 @@ class ChatAdmin(admin.ModelAdmin):
     ]
 
 class ChatMessageAdmin(admin.ModelAdmin):
+    """
+    @brief Admin interface for the ChatMessage model.
+    @details This class customizes the Django admin interface for the 
+             ChatMessage model, specifying which fields are displayed 
+             in the list view.
+    """
+    
     list_display = [
         "created_at",
         "chat",
         "sender",
         "text"
     ]
-# --------------------------------------------------------------
-# @brief Registers the IntrestRequest model with the Django admin.
-# @details This statement registers the IntrestRequest model with the 
-#          Django admin site, using the IntrestRequestAdmin class for customization.
-# --------------------------------------------------------------
-admin.site.register(IntrestRequest, IntrestRequestAdmin)
 
-admin.site.register(Chat,ChatAdmin)
-admin.site.register(ChatMessage,ChatMessageAdmin)
+"""
+@brief Registers the IntrestRequest, Chat, and ChatMessage models with the Django admin.
+@details These statements register the IntrestRequest, Chat, and ChatMessage models with the 
+         Django admin site, using their respective admin classes for customization.
+"""
+admin.site.register(IntrestRequest, IntrestRequestAdmin)
+admin.site.register(Chat, ChatAdmin)
+admin.site.register(ChatMessage, ChatMessageAdmin)
