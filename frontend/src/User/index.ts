@@ -77,7 +77,10 @@ class User {
      * @param password - The password of the user.
      * @returns {Promise<boolean>} Returns `true` if login is successful, otherwise `false`.
      */
-    public login = async (username: string, password: string): Promise<boolean> => {
+    public login = async (
+        username: string,
+        password: string,
+    ): Promise<boolean> => {
         const url = "http://127.0.0.1:8000/auth/login";
 
         const data = {
@@ -239,7 +242,7 @@ class User {
             if (!res.ok) throw new Error("Failed to send request");
 
             const response = await res.json();
-            console.log(response)
+            console.log(response);
             return true;
         } catch (error) {
             console.error("Error during sending request:", error);
@@ -282,7 +285,10 @@ class User {
      * @param status - The new status of the request.
      * @returns {Promise<boolean>} Returns `true` if the status update is successful, otherwise `false`.
      */
-    public updateRequestStatus = async (requestId: number, status: string): Promise<boolean> => {
+    public updateRequestStatus = async (
+        requestId: number,
+        status: string,
+    ): Promise<boolean> => {
         const url = "http://127.0.0.1:8000/request";
 
         const data = {
@@ -302,7 +308,7 @@ class User {
             if (!res.ok) throw new Error("Failed to update request status");
 
             const response = await res.json();
-            console.log(response)
+            console.log(response);
             return true;
         } catch (error) {
             console.error("Error during updating request status:", error);

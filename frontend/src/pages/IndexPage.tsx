@@ -105,10 +105,7 @@ const IndexPage: React.FC = () => {
                                 sx={{ padding: "0.8rem", height: "100%" }}
                                 className="flex-col"
                             >
-                                <Typography
-                                    variant="h4"
-                                    align="left"
-                                >
+                                <Typography variant="h4" align="left">
                                     Add New
                                 </Typography>
                                 <UserList />
@@ -117,10 +114,7 @@ const IndexPage: React.FC = () => {
                                 value={"requests"}
                                 sx={{ padding: "0.8rem" }}
                             >
-                                <Typography
-                                    variant="h4"
-                                    align="left"
-                                >
+                                <Typography variant="h4" align="left">
                                     Request
                                 </Typography>
                                 <RequstList />

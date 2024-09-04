@@ -44,7 +44,10 @@ const RequestList: React.FC = () => {
      * @param {string} status - The new status to set for the request ("accept" or "reject").
      * @returns {Promise<void>} A promise that resolves when the request status is updated and the list is refreshed.
      */
-    const handleRequestStatusUpdate = async (requestId: number, status: string) => {
+    const handleRequestStatusUpdate = async (
+        requestId: number,
+        status: string,
+    ) => {
         await user.updateRequestStatus(requestId, status);
         const requests = await user.getRequests();
         setRequests(requests);
@@ -69,12 +72,27 @@ const RequestList: React.FC = () => {
                             <Icon icon="mdi:user" fontSize={"2rem"} />
                         </ListItemIcon>
                         <ListItemText>
-                            {intrest_request.request_from.first_name} {intrest_request.request_from.last_name}
+                            {intrest_request.request_from.first_name}{" "}
+                            {intrest_request.request_from.last_name}
                         </ListItemText>
-                        <IconButton onClick={() => handleRequestStatusUpdate(intrest_request.id, "accept")}>
+                        <IconButton
+                            onClick={() =>
+                                handleRequestStatusUpdate(
+                                    intrest_request.id,
+                                    "accept",
+                                )
+                            }
+                        >
                             <Icon icon="mdi:user-check" />
                         </IconButton>
-                        <IconButton onClick={() => handleRequestStatusUpdate(intrest_request.id, "reject")}>
+                        <IconButton
+                            onClick={() =>
+                                handleRequestStatusUpdate(
+                                    intrest_request.id,
+                                    "reject",
+                                )
+                            }
+                        >
                             <Icon icon="mdi:user-remove" />
                         </IconButton>
                     </ListItem>

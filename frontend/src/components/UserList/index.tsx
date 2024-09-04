@@ -70,7 +70,10 @@ const UserList: React.FC = () => {
                             <ListItemIcon>
                                 <Icon icon="mdi:user" fontSize={"2rem"} />
                             </ListItemIcon>
-                            <ListItemText primary={u.first_name + " " + u.last_name} secondary={"@" + u.username} />
+                            <ListItemText
+                                primary={u.first_name + " " + u.last_name}
+                                secondary={"@" + u.username}
+                            />
                             <IconButton
                                 onClick={() => handleSendRequestBtn(u.username)}
                             >
