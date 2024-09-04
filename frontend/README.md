@@ -4,7 +4,7 @@
 
 This React application serves as the frontend for a web application designed to facilitate communication between users. The key features of the app include:
 
-- **Sending Interest Messages**: Users can send messages of interest to other users.
+- **Sending Interest Requests**: Users can send interest requests to other users.
 - **Handling Responses**: Recipients of the interest messages can choose to accept or reject the messages.
 - **Chat Feature**: Upon acceptance of an interest message, both users can engage in chat conversations with each other.
 
@@ -18,9 +18,10 @@ The app is built using React, providing a responsive and interactive user interf
 - **Tailwind CSS**: A utility-first CSS framework for designing custom user interfaces efficiently.
 
 
-## Installation
+## Steps to run app in development mode
 
 Follow these steps to get your development environment set up:
+
 
 1. **Clone the Repository**:
 
@@ -42,3 +43,4 @@ Follow these steps to get your development environment set up:
     ```bash
     npm run dev
     ```
+**Note**: Please ensure that the backend server is running before starting the frontend application. For instructions on setting up and running the backend, refer to the [backend project's README](../backend/README.md).
