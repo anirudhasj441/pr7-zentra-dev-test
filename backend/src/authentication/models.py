@@ -20,7 +20,7 @@ class CustomUser(AbstractUser):
              The relationship is symmetrical, meaning if user A is friends with user B, user B is also 
              friends with user A.
     """
-    friends = models.ManyToManyField('self', symmetrical=True, related_name='friends_with', null=True, blank=True)
+    friends = models.ManyToManyField('self', symmetrical=True)
     # dob = models.DateField(null=True, blank=True)  # Uncomment to add date of birth field to the model
 
     """
