@@ -1,50 +1,46 @@
-# React + TypeScript + Vite
+# pr7-zentratech-dev-test-frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This React application serves as the frontend for a web application designed to facilitate communication between users. The key features of the app include:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Sending Interest Requests**: Users can send interest requests to other users.
+- **Handling Responses**: Recipients of the interest messages can choose to accept or reject the messages.
+- **Chat Feature**: Upon acceptance of an interest message, both users can engage in chat conversations with each other.
 
-## Expanding the ESLint configuration
+The app is built using React, providing a responsive and interactive user interface. It integrates with a Django backend to handle communication and user interactions.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Technologies Used
 
-- Configure the top-level `parserOptions` property like this:
+- **React**: A JavaScript library for building user interfaces.
+- **React Router DOM**: For routing and navigation.
+- **Material-UI**: A React UI framework for building responsive and modern user interfaces.
+- **Tailwind CSS**: A utility-first CSS framework for designing custom user interfaces efficiently.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Steps to run app in development mode
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Follow these steps to get your development environment set up:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone https://github.com/anirudhasj441/pr7-zentra-dev-test
+   ```
+
+1. **Navigate to the Project Directory**:
+    ```bash
+    cd pr7-zentra-dev-test/frontend
+    ```
+
+1. **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+
+1. **Start the Development Server**:
+    ```bash
+    npm run dev
+    ```
+**Note**: Please ensure that the backend server is running before starting the frontend application. For instructions on setting up and running the backend, refer to the [backend project's README](../backend/README.md).
