@@ -61,7 +61,7 @@ The backend will be built using Django, providing a robust framework for handlin
     - The Django admin interface is available at http://127.0.0.1:8000/admin/.
 1. **Run test cases**:
    ```bash
-   python manage.py test app
+   python manage.py test
    ```
 **Note**: Ensure that you have the frontend project running as well. For instructions on starting the frontend, refer to the [frontend project's README](../frontend/README.md).
 
