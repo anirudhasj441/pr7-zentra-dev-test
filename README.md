@@ -26,9 +26,10 @@ For detailed instructions on setting up and running the backend, please refer to
 For detailed instructions on setting up and running the frontend, please refer to the [Frontend README.md](./frontend/README.md).
 
 ## Documentation
-For detailed API documentation, refer to the 
-- ### Backend
-  [Doxygen-generated PDF](./backend/docs/pr7-zentratech-test-sourc-doc.pdf
+- For Project documentation, refer to [Project Documentation](./docs/ZentraTech%20Developer%20Test%202024.pdf)
+- For detailed API documentation, refer to the 
+  - ### Backend
+      [Doxygen-generated PDF](./backend/docs/pr7-zentratech-test-sourc-doc.pdf
 ).
-- ### Frontend
-  [Source Code Documentation](https://pr7-zentratech-test-frontend-doc.codingdevil.in/)
+  - ### Frontend
+    [Source Code Documentation](https://pr7-zentratech-test-frontend-doc.codingdevil.in/)
