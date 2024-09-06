@@ -39,7 +39,8 @@ const ChatBox: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [messages, setMessages] = useState<IMessageData[]>([]);
     const [msgText, setMsgText] = useState<string>("");
-    const [connectioTimeout, setConnectionTimeout] = useState<boolean>(false);
+    const [connectionTimeout, setConnectionTimeout] = useState<boolean>(false);
+    const oldChatId = useRef<string>("");
 
     /**
      * @function handleSendBtnClick
@@ -94,7 +95,9 @@ const ChatBox: React.FC = () => {
      * @param {string | undefined} chat_id - The chat room ID.
      */
     const connectToChat = async (chat_id: string | undefined) => {
+        console.log(oldChatId.current, ":::", chat_id);
         if (!chat_id) return;
+        if (oldChatId.current === chat_id) return;
         setLoading(true);
         mainSocket.emit("connect:chat", { chat_id: chat_id });
 
@@ -106,6 +109,8 @@ const ChatBox: React.FC = () => {
             });
         });
 
+        oldChatId.current = chat_id;
+
         console.log("Connected to chat:", chat_id);
     };
 
@@ -114,7 +119,6 @@ const ChatBox: React.FC = () => {
      * It sets up event listeners for new messages and handles connection errors.
      */
     useEffect(() => {
-        console.log("ChatBox mounted!");
         const timeoutPromise = new Promise<never>(
             (_, reject) =>
                 setTimeout(
@@ -135,10 +139,7 @@ const ChatBox: React.FC = () => {
             }
         };
 
-        if (mounted.current) {
-            createSocketConnection();
-            return;
-        }
+        console.log("ChatBox mounted!");
 
         createSocketConnection();
 
@@ -156,10 +157,18 @@ const ChatBox: React.FC = () => {
         });
 
         setMessages([]);
-        if (chat_id) user.getMessages(chat_id).then(setMessages);
+        if (chat_id)
+            user.getMessages(chat_id).then((messages: IMessageData[]) => {
+                if (messageContainer.current === null) return;
+                setMessages(messages);
+                messageContainer.current.scrollTop =
+                    messageContainer.current.scrollHeight;
+            });
 
         return () => {
             mounted.current = true;
+            mainSocket.off("message:recieve");
+            mainSocket.off("message:notification");
             if (mainSocket.connected) mainSocket.disconnect();
         };
     }, [user, chat_id]);
@@ -167,7 +176,7 @@ const ChatBox: React.FC = () => {
     return (
         <>
             <div className="h-full w-full flex flex-col py-3">
-                {connectioTimeout ? (
+                {connectionTimeout ? (
                     <Typography variant="h6">Connection Error...</Typography>
                 ) : (
                     <>
