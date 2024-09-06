@@ -45,6 +45,10 @@ The backend will be built using Django, providing a robust framework for handlin
    ```bash
    cd ./src
    ```
+1. **Update the Database Migrations for all Apps**:
+   ```bash
+   python manage.py makemigrations app authentication
+   ```
 1. **Apply Database Migrations**:
     ```bash
     python manage.py migrate
