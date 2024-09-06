@@ -11,6 +11,11 @@ from asgiref.sync import sync_to_async
 from .serializers import MessageSerializer, ChatSerializer
 from django.contrib.auth import get_user_model
 from .models import ChatMessage, Chat
+from dotenv import load_dotenv
+from django.conf import settings
+import os
+
+load_dotenv(os.path.join(settings.BASE_DIR, '.env'))
 
 User = get_user_model()
 
@@ -19,7 +24,7 @@ User = get_user_model()
 @details This creates an AsyncRedisManager for handling communication between 
          multiple instances of the Socket.IO server via Redis.
 """
-mgr = socketio.AsyncRedisManager("redis://127.0.0.1:6379")
+mgr = socketio.AsyncRedisManager(os.getenv('REDIS_URL'))
 
 """
 @brief Initializes the Socket.IO server.

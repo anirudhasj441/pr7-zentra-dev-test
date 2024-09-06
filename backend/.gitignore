@@ -10,3 +10,4 @@ migrations
 **/docs/html
 **/docs/latex
 
+**/.env
