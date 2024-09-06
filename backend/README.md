@@ -14,7 +14,7 @@ The backend will be built using Django, providing a robust framework for handlin
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/anirudhasj441/pr7-zentra-dev-test
+   git clone [https://github.com/anirudhasj441/pr7-zentra-dev-test](https://github.com/anirudhasj441/pr7-zentra-dev-test.git)
    ```
 
 1. **Navigate to the Project Directory**:
