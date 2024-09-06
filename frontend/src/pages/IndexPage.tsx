@@ -25,7 +25,6 @@ import { TabContext } from "@mui/lab";
 import { Icon } from "@iconify/react";
 import UserList from "../components/UserList";
 import RequstList from "../components/RequestList";
-import mainSocket from "../socket";
 import ChatList from "../components/ChatList";
 
 /**
@@ -55,7 +54,6 @@ const IndexPage: React.FC = () => {
     };
 
     useEffect(() => {
-        mainSocket.connect();
 
         if (mounted.current) return;
 
@@ -66,16 +64,7 @@ const IndexPage: React.FC = () => {
             }
         });
 
-        mainSocket.on("connect", () => {
-            console.log("Connected to socket.");
-        });
-
-        mainSocket.on("sock:send", (data) => {
-            console.log("message from socket: ", data);
-        });
-
         return () => {
-            mainSocket.disconnect();
             mounted.current = true;
         };
     }, [user, navigate]);

@@ -40,8 +40,10 @@ const ChatBox: React.FC = () => {
 
     const messageContainer = useRef<HTMLDivElement | null>(null);
 
+    const [loading, setLoading] = useState<boolean>(false);
     const [messages, setMessages] = useState<IMessageData[]>([]);
     const [msgText, setMsgText] = useState<string>("");
+    const [connectioTimeout, setConnectionTimeout] = useState<boolean>(false);
 
     /**
      * @function handleSendBtnClick
@@ -75,34 +77,77 @@ const ChatBox: React.FC = () => {
             messageContainer.current.scrollHeight;
     }, [messageContainer]);
 
-    useEffect(() => {
-        console.log("ChatBox mounted!!!!");
-        if (mounted.current) {
-            setMessages([]);
-            if (chat_id) user.getMessages(chat_id).then(setMessages);
-            mainSocket.emit("connect:chat", {
-                chat_id: chat_id,
-            });
+    const connectSocket = async () => {
+        if (mainSocket.connected) return;
+        mainSocket.connect();
+        await new Promise<void>((resolve: () => void) => {
+            mainSocket.on("connect", resolve);
+        })
+        console.log(mainSocket.connected)
+        console.log("Connected...")
+        return;
+    }
 
-            return;
-        }
-
-        if (!mainSocket.connected) mainSocket.connect();
-
-        setMessages([]);
-        if (chat_id) user.getMessages(chat_id).then(setMessages);
+    const connectToChat = async(chat_id: string | undefined) => {
+        if(!chat_id) return
+        setLoading(true);
         mainSocket.emit("connect:chat", {
             chat_id: chat_id,
         });
 
-        mainSocket.on("message:notification", (data: { msg: string }) => {
-            console.log(data);
-        });
+        await new Promise<void>((resolve: () => void) => {
+            mainSocket.on("message:notification", (data) => {
+                console.log(data);
+                setLoading(false)
+                resolve();
+            } );
+        })
+
+        console.log("Connected to chat: ", chat_id)
+    }
+
+    useEffect(() => {
+        console.log("ChatBox mounted!!!!");
+
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("Connection timed out")), 30000) // 2 minutes
+        );
+
+        const createSocketConnection = async() => {
+            if (!mainSocket.connected) {
+                await connectSocket()
+            }
+            try {
+                await Promise.race([connectToChat(chat_id), timeoutPromise])
+            } catch(error) {
+                console.error(error);
+                setConnectionTimeout(true);
+            }
+
+        }
+        if(mounted.current) {
+            createSocketConnection()
+            return;
+        }
+
+
+        createSocketConnection();
 
         mainSocket.on("message:recieve", (data: IMessageData) => {
             console.log("New Message", data);
             handleNewMessage(data);
         });
+
+        mainSocket.on("connect_error", (error) => {
+            console.error("WebSocket connection error:", error);
+        });
+
+        mainSocket.on("disconnect", (reason) => {
+            console.warn("WebSocket disconnected:", reason);
+        });
+
+        setMessages([]);
+        if (chat_id) user.getMessages(chat_id).then(setMessages);
 
         return () => {
             mounted.current = true;
@@ -113,6 +158,11 @@ const ChatBox: React.FC = () => {
     return (
         <>
             <div className="h-full w-full flex flex-col py-3">
+                {connectioTimeout ? <Typography variant="h6">Connecting to server...</Typography> : <>
+                {loading ?
+                <Typography variant="h6">Connecting to server...</Typography> :
+                <>
+
                 <div
                     ref={messageContainer}
                     className="messages flex-grow w-full overflow-y-auto px-3"
@@ -177,6 +227,10 @@ const ChatBox: React.FC = () => {
                         </IconButton>
                     </div>
                 </div>
+                </>
+                }
+                </>}
+
             </div>
         </>
     );

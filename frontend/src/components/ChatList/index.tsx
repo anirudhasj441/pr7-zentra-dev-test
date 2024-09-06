@@ -46,7 +46,10 @@ const ChatList: React.FC = () => {
     useEffect(() => {
         if (mounted.current) return;
 
-        user.getChats().then(setChats);
+        user.checkUserAuthenticated().then((result: boolean) => {
+            if(result)
+                user.getChats().then(setChats);
+        })
 
         return () => {
             mounted.current = true;

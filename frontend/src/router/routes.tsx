@@ -12,11 +12,17 @@
 
 import { RouteObject } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
-import { Suspense } from "react";
-import IndexPage from "../pages/IndexPage";
-import LoginForm from "../pages/LoginForm";
-import SignUpForm from "../pages/SignUpForm";
-import ChatBox from "../components/ChatBox";
+import React, { Suspense } from "react";
+
+// eslint-disable-next-line react-refresh/only-export-components
+const ChatBox = React.lazy(() => import("../components/ChatBox"))
+// eslint-disable-next-line react-refresh/only-export-components
+const SignUpForm = React.lazy(() => import("../pages/SignUpForm"));
+// eslint-disable-next-line react-refresh/only-export-components
+const LoginForm = React.lazy(() => import("../pages/LoginForm"));
+// eslint-disable-next-line react-refresh/only-export-components
+const IndexPage = React.lazy(() => import("../pages/IndexPage"));
+
 
 const routes: RouteObject[] = [
     {
