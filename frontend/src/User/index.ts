@@ -33,7 +33,8 @@ class User {
      * @brief Initializes a new `User` instance and retrieves the access token from session storage.
      */
     public constructor() {
-        this._backend_server_base_url = import.meta.env.VITE_BACKEND_URL
+        this._backend_server_base_url =
+            import.meta.env.VITE_BACKEND_URL ?? "http://127.0.0.1:8000";
         this._access_token = sessionStorage.getItem("access_token");
     }
 

@@ -24,7 +24,7 @@ User = get_user_model()
 @details This creates an AsyncRedisManager for handling communication between 
          multiple instances of the Socket.IO server via Redis.
 """
-mgr = socketio.AsyncRedisManager(os.getenv('REDIS_URL'))
+mgr = socketio.AsyncRedisManager(os.getenv('REDIS_URL') if os.getenv('REDIS_URL') else "redis://127.0.0.1:6379")
 
 """
 @brief Initializes the Socket.IO server.

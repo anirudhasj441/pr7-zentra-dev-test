@@ -20,9 +20,9 @@ import { useParams } from "react-router-dom";
 import userContext from "../../User/context";
 import { IMessageData } from "../../User/types";
 import mainSocket from "../../socket";
+import moment from "moment";
 
 import "./style.scss";
-import moment from "moment";
 
 /**
  * @function ChatBox
@@ -33,13 +33,9 @@ import moment from "moment";
  */
 const ChatBox: React.FC = () => {
     const mounted = useRef(false);
-
     const { chat_id } = useParams<string>();
-
     const user = useContext(userContext);
-
     const messageContainer = useRef<HTMLDivElement | null>(null);
-
     const [loading, setLoading] = useState<boolean>(false);
     const [messages, setMessages] = useState<IMessageData[]>([]);
     const [msgText, setMsgText] = useState<string>("");
@@ -58,7 +54,6 @@ const ChatBox: React.FC = () => {
             chat_id: chat_id,
             message: msgText,
         });
-
         setMsgText("");
     };
 
@@ -71,65 +66,79 @@ const ChatBox: React.FC = () => {
         setMessages((messages) => [...messages, message]);
     };
 
+    /**
+     * @brief Effect hook to scroll the message container to the bottom whenever messages are updated.
+     */
     useEffect(() => {
         if (messageContainer.current === null) return;
         messageContainer.current.scrollTop =
             messageContainer.current.scrollHeight;
-    }, [messageContainer]);
+    }, [messages]);
 
+    /**
+     * @function connectSocket
+     * @brief Establishes the socket connection.
+     */
     const connectSocket = async () => {
         if (mainSocket.connected) return;
         mainSocket.connect();
         await new Promise<void>((resolve: () => void) => {
             mainSocket.on("connect", resolve);
-        })
-        console.log(mainSocket.connected)
-        console.log("Connected...")
-        return;
-    }
-
-    const connectToChat = async(chat_id: string | undefined) => {
-        if(!chat_id) return
-        setLoading(true);
-        mainSocket.emit("connect:chat", {
-            chat_id: chat_id,
         });
+        console.log("Connected...");
+    };
+
+    /**
+     * @function connectToChat
+     * @brief Connects to the specified chat room.
+     * @param {string | undefined} chat_id - The chat room ID.
+     */
+    const connectToChat = async (chat_id: string | undefined) => {
+        if (!chat_id) return;
+        setLoading(true);
+        mainSocket.emit("connect:chat", { chat_id: chat_id });
 
         await new Promise<void>((resolve: () => void) => {
             mainSocket.on("message:notification", (data) => {
                 console.log(data);
-                setLoading(false)
+                setLoading(false);
                 resolve();
-            } );
-        })
+            });
+        });
 
-        console.log("Connected to chat: ", chat_id)
-    }
+        console.log("Connected to chat:", chat_id);
+    };
 
+    /**
+     * @brief useEffect hook for managing socket connections and loading messages.
+     * It sets up event listeners for new messages and handles connection errors.
+     */
     useEffect(() => {
-        console.log("ChatBox mounted!!!!");
-
-        const timeoutPromise = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("Connection timed out")), 30000) // 2 minutes
+        console.log("ChatBox mounted!");
+        const timeoutPromise = new Promise<never>(
+            (_, reject) =>
+                setTimeout(
+                    () => reject(new Error("Connection timed out")),
+                    30000,
+                ), // 30 seconds
         );
 
-        const createSocketConnection = async() => {
+        const createSocketConnection = async () => {
             if (!mainSocket.connected) {
-                await connectSocket()
+                await connectSocket();
             }
             try {
-                await Promise.race([connectToChat(chat_id), timeoutPromise])
-            } catch(error) {
+                await Promise.race([connectToChat(chat_id), timeoutPromise]);
+            } catch (error) {
                 console.error(error);
                 setConnectionTimeout(true);
             }
+        };
 
-        }
-        if(mounted.current) {
-            createSocketConnection()
+        if (mounted.current) {
+            createSocketConnection();
             return;
         }
-
 
         createSocketConnection();
 
@@ -158,79 +167,91 @@ const ChatBox: React.FC = () => {
     return (
         <>
             <div className="h-full w-full flex flex-col py-3">
-                {connectioTimeout ? <Typography variant="h6">Connecting to server...</Typography> : <>
-                {loading ?
-                <Typography variant="h6">Connecting to server...</Typography> :
-                <>
-
-                <div
-                    ref={messageContainer}
-                    className="messages flex-grow w-full overflow-y-auto px-3"
-                >
-                    {messages.map((message: IMessageData) => (
-                        <div
-                            key={message.id}
-                            className={[
-                                "chat w-full",
-                                message.sender.username === user.username
-                                    ? "text-right"
-                                    : "",
-                            ].join(" ")}
-                        >
-                            <Box
-                                sx={{
-                                    bgcolor:
-                                        message.sender.username ===
-                                        user.username
-                                            ? "primary.main"
-                                            : "#4a4b4b",
-                                    width: "fit-content",
-                                    paddingX: "0.5rem",
-                                    paddingY: "0.3rem",
-                                    borderRadius: "1rem",
-                                    marginLeft:
-                                        message.sender.username ===
-                                        user.username
-                                            ? "auto"
-                                            : "",
-                                }}
-                            >
-                                <Typography align="right">
-                                    {message.text}
-                                </Typography>
-                            </Box>
-                            <Typography variant="caption">
-                                {moment(message.created_at).fromNow()}
+                {connectioTimeout ? (
+                    <Typography variant="h6">Connection Error...</Typography>
+                ) : (
+                    <>
+                        {loading ? (
+                            <Typography variant="h6">
+                                Connecting to server...
                             </Typography>
-                        </div>
-                    ))}
-                </div>
-                <div className="input w-full flex gap-2 items-center px-3 pt-3">
-                    <div className="flex-grow">
-                        <TextField
-                            fullWidth
-                            value={msgText}
-                            onChange={(e) => setMsgText(e.target.value)}
-                            size="small"
-                            multiline
-                            placeholder="Say Hello..."
-                            id="fullWidth"
-                            maxRows={5}
-                        />
-                    </div>
-                    <div>
-                        <IconButton
-                            sx={{ aspectRatio: 1 }}
-                            onClick={handleSendBtnClick}
-                        >
-                            <Icon icon="ic:baseline-send" />
-                        </IconButton>
-                    </div>
-                </div>
-                </>
-                }
-                </>}
-
+                        ) : (
+                            <>
+                                <div
+                                    ref={messageContainer}
+                                    className="messages flex-grow w-full overflow-y-auto px-3"
+                                >
+                                    {messages.map((message: IMessageData) => (
+                                        <div
+                                            key={message.id}
+                                            className={[
+                                                "chat w-full",
+                                                message.sender.username ===
+                                                user.username
+                                                    ? "text-right"
+                                                    : "",
+                                            ].join(" ")}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    bgcolor:
+                                                        message.sender
+                                                            .username ===
+                                                        user.username
+                                                            ? "primary.main"
+                                                            : "#4a4b4b",
+                                                    width: "fit-content",
+                                                    paddingX: "0.5rem",
+                                                    paddingY: "0.3rem",
+                                                    borderRadius: "1rem",
+                                                    marginLeft:
+                                                        message.sender
+                                                            .username ===
+                                                        user.username
+                                                            ? "auto"
+                                                            : "",
+                                                }}
+                                            >
+                                                <Typography align="right">
+                                                    {message.text}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="caption">
+                                                {moment(
+                                                    message.created_at,
+                                                ).fromNow()}
+                                            </Typography>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="input w-full flex gap-2 items-center px-3 pt-3">
+                                    <div className="flex-grow">
+                                        <TextField
+                                            fullWidth
+                                            value={msgText}
+                                            onChange={(e) =>
+                                                setMsgText(e.target.value)
+                                            }
+                                            size="small"
+                                            multiline
+                                            placeholder="Say Hello..."
+                                            id="fullWidth"
+                                            maxRows={5}
+                                        />
+                                    </div>
+                                    <div>
+                                        <IconButton
+                                            sx={{ aspectRatio: 1 }}
+                                            onClick={handleSendBtnClick}
+                                        >
+                                            <Icon icon="ic:baseline-send" />
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </>
+                )}
             </div>
         </>
     );
