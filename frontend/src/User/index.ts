@@ -26,11 +26,14 @@ class User {
     private _lastName: string = "";
     private _email: string = "";
 
+    private _backend_server_base_url: string;
+
     /**
      * @constructor
      * @brief Initializes a new `User` instance and retrieves the access token from session storage.
      */
     public constructor() {
+        this._backend_server_base_url = import.meta.env.VITE_BACKEND_URL
         this._access_token = sessionStorage.getItem("access_token");
     }
 
@@ -41,7 +44,7 @@ class User {
      * @returns {Promise<boolean>} Returns `true` if the user is authenticated, otherwise `false`.
      */
     public checkUserAuthenticated = async (): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/auth/get_user";
+        const url = this.backen_server_url + "/auth/get_user";
 
         try {
             if (this._access_token === null) return false;
@@ -81,7 +84,7 @@ class User {
         username: string,
         password: string,
     ): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/auth/login";
+        const url = this.backen_server_url + "/auth/login";
 
         const data = {
             username: username,
@@ -135,7 +138,7 @@ class User {
      * @returns {Promise<boolean>} Returns `true` if signup is successful, otherwise `false`.
      */
     public signup = async (data: IUserData): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/auth/signup";
+        const url = this.backen_server_url + "/auth/signup";
 
         try {
             const res = await fetch(url, {
@@ -162,7 +165,7 @@ class User {
      * @returns {Promise<any>} Returns the list of users if successful, otherwise `undefined`.
      */
     public getAllUsers = async () => {
-        const url = "http://127.0.0.1:8000/list_users";
+        const url = this.backen_server_url + "/list_users";
 
         try {
             const res = await fetch(url, {
@@ -189,7 +192,7 @@ class User {
      * @returns {Promise<boolean>} Returns `true` if the request has been sent, otherwise `false`.
      */
     public checkRequestSent = async (username: string): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/check_request_sent";
+        const url = this.backen_server_url + "/check_request_sent";
 
         const data = {
             username: username,
@@ -224,7 +227,7 @@ class User {
      * @returns {Promise<boolean>} Returns `true` if the request is sent successfully, otherwise `false`.
      */
     public sendRequest = async (username: string): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/request";
+        const url = this.backen_server_url + "/request";
 
         try {
             const data = {
@@ -257,7 +260,7 @@ class User {
      * @returns {Promise<any>} Returns the list of requests if successful, otherwise `false`.
      */
     public getRequests = async () => {
-        const url = "http://127.0.0.1:8000/request";
+        const url = this.backen_server_url + "/request";
 
         try {
             const res = await fetch(url, {
@@ -289,7 +292,7 @@ class User {
         requestId: number,
         status: string,
     ): Promise<boolean> => {
-        const url = "http://127.0.0.1:8000/request";
+        const url = this.backen_server_url + "/request";
 
         const data = {
             request_id: requestId,
@@ -323,7 +326,7 @@ class User {
      * @returns {Promise<any>} Returns the list of chats if successful, otherwise `undefined`.
      */
     public getChats = async () => {
-        const url = "http://127.0.0.1:8000/chats";
+        const url = this.backen_server_url + "/chats";
 
         try {
             const res = await fetch(url, {
@@ -350,7 +353,7 @@ class User {
      * @returns {Promise<any>} Returns the messages for the chat if successful, otherwise `undefined`.
      */
     public getMessages = async (chat_id: string) => {
-        const url = "http://127.0.0.1:8000/messages?chat_id=" + chat_id;
+        const url = this.backen_server_url + "/messages?chat_id=" + chat_id;
 
         try {
             const res = await fetch(url, {
@@ -416,6 +419,15 @@ class User {
      */
     public get email(): string {
         return this._email;
+    }
+
+    /**
+     * @property backen_server_url
+     * @brief Gets the backend server url.
+     * @type {string}
+     */
+    public get backen_server_url(): string {
+        return this._backend_server_base_url;
     }
 }
 

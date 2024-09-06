@@ -19,8 +19,8 @@ import { io, Socket } from "socket.io-client";
  * @type {Socket}
  * @default
  * @description The main socket instance used for communication with the server.
- *              This socket is configured to connect to the server at "http://127.0.0.1:8000".
+ *              This socket is configured to connect to the server.
  */
-const mainSocket: Socket = io("http://127.0.0.1:8000");
+const mainSocket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 export default mainSocket;

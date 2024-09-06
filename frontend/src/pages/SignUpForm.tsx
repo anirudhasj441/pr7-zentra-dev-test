@@ -66,7 +66,7 @@ const SignUpForm: React.FC = () => {
      */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // const url = "http://127.0.0.1:8000/auth/signup";
+        // const url = user.backen_server_url + "/auth/signup";
 
         const data = {
             first_name: firstName,
@@ -114,7 +114,7 @@ const SignUpForm: React.FC = () => {
      *                             or `false` otherwise.
      */
     const checkUsernameAvailability = async (username: string) => {
-        const url = "http://127.0.0.1:8000/auth/username_availability";
+        const url = user.backen_server_url + "/auth/username_availability";
 
         const res = await fetch(url, {
             method: "POST",
