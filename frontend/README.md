@@ -26,7 +26,7 @@ Follow these steps to get your development environment set up:
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/anirudhasj441/pr7-zentra-dev-test
+   git clone https://github.com/anirudhasj441/pr7-zentra-dev-test.git
    ```
 
 1. **Navigate to the Project Directory**:
