@@ -67,5 +67,7 @@ class CustomUserAdmin(UserAdmin):
         ]
     ]   ## The fields and their grouping in the user detail view.
 
+    filter_horizontal = ('friends','groups','user_permissions',)
+
 ## Register the CustomUser model with the specified admin configuration
 admin.site.register(CustomUser, CustomUserAdmin)
